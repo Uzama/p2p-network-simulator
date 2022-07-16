@@ -2,6 +2,7 @@ package storage
 
 import (
 	"fmt"
+	"sync"
 
 	"p2p-network-simulator/domain/entities"
 	"p2p-network-simulator/domain/interfaces"
@@ -11,6 +12,7 @@ type P2PNetwork struct {
 	network []*tree
 	treap   *treap
 	ids     map[int]struct{}
+	lock    sync.Mutex
 }
 
 func NewP2PNetwork() interfaces.P2PNetwork {
@@ -21,6 +23,9 @@ func NewP2PNetwork() interfaces.P2PNetwork {
 }
 
 func (network *P2PNetwork) Join(node entities.Node) error {
+	network.lock.Lock()
+	defer network.lock.Unlock()
+
 	_, ok := network.ids[node.Id]
 	if ok {
 		return fmt.Errorf("id %d already reserved", node.Id)
@@ -32,6 +37,8 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 		currentCapacity: node.Capacity,
 		children:        make([]*peer, 0),
 	}
+
+	network.ids[node.Id] = struct{}{}
 
 	parentPeer := network.treap.mostCapacityPeer()
 
