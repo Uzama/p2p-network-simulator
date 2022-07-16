@@ -3,6 +3,7 @@ package storage
 import (
 	"fmt"
 
+	"p2p-network-simulator/domain/entities"
 	"p2p-network-simulator/domain/interfaces"
 )
 
@@ -19,32 +20,42 @@ func NewP2PNetwork() interfaces.P2PNetwork {
 	}
 }
 
-func (network *P2PNetwork) Join() {
-	peer1 := &peer{
-		id:              1,
-		maxCapacity:     2,
-		currentCapacity: 0,
+func (network *P2PNetwork) Join(node entities.Node) error {
+	_, ok := network.ids[node.Id]
+	if ok {
+		return fmt.Errorf("id %d already reserved", node.Id)
 	}
 
-	peer2 := &peer{
-		id:              2,
-		maxCapacity:     1,
-		currentCapacity: 0,
+	peer := &peer{
+		id:              node.Id,
+		maxCapacity:     node.Capacity,
+		currentCapacity: node.Capacity,
+		children:        make([]*peer, 0),
 	}
 
-	peer3 := &peer{
-		id:              3,
-		maxCapacity:     3,
-		currentCapacity: 0,
+	parentPeer := network.treap.mostCapacityPeer()
+
+	if parentPeer == nil {
+		tree := newTree(peer)
+
+		network.network = append(network.network, tree)
+		network.treap.insert(peer)
+
+		return nil
 	}
 
-	network.treap.insert(peer1)
-	network.treap.insert(peer2)
-	network.treap.insert(peer3)
+	network.treap.delete(parentPeer)
 
-	fmt.Println()
+	parentPeer.children = append(parentPeer.children, peer)
+	parentPeer.currentCapacity -= 1
 
-	network.treap.delete(peer1)
+	if parentPeer.currentCapacity > 0 {
+		network.treap.insert(parentPeer)
+	}
+
+	network.treap.insert(peer)
+
+	return nil
 }
 
 func (network *P2PNetwork) Leave() {

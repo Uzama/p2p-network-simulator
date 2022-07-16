@@ -17,6 +17,14 @@ func (t *treap) delete(peer *peer) {
 	recursiveDelete(t.root, peer)
 }
 
+func (t *treap) mostCapacityPeer() *peer {
+	if t.root == nil {
+		return nil
+	}
+
+	return t.root.getPeer()
+}
+
 func rightRotate(root *node) {
 	left := root.left
 	subTree := left.right

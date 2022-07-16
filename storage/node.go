@@ -11,3 +11,7 @@ func newNode(peer *peer) *node {
 		peer: peer,
 	}
 }
+
+func (n *node) getPeer() *peer {
+	return n.peer
+}

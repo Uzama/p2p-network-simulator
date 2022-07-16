@@ -4,6 +4,8 @@ type tree struct {
 	root *peer
 }
 
-func newTree() *tree {
-	return &tree{}
+func newTree(peer *peer) *tree {
+	return &tree{
+		root: peer,
+	}
 }
