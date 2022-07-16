@@ -13,8 +13,8 @@ func (t *treap) insert(peer *peer) {
 	recursiveInsert(t.root, peer)
 }
 
-func (t *treap) delete(peer *peer) {
-	recursiveDelete(t.root, peer)
+func (t *treap) delete(id int) {
+	recursiveDelete(t.root, id)
 }
 
 func (t *treap) mostCapacityPeer() *peer {
@@ -71,18 +71,18 @@ func recursiveInsert(root *node, peer *peer) {
 	}
 }
 
-func recursiveDelete(root *node, peer *peer) {
+func recursiveDelete(root *node, id int) {
 	if root == nil {
 		return
 	}
 
-	if peer.id < root.peer.id {
-		recursiveDelete(root.left, peer)
+	if id < root.peer.id {
+		recursiveDelete(root.left, id)
 		return
 	}
 
-	if peer.id > root.peer.id {
-		recursiveDelete(root.right, peer)
+	if id > root.peer.id {
+		recursiveDelete(root.right, id)
 		return
 	}
 
@@ -92,20 +92,22 @@ func recursiveDelete(root *node, peer *peer) {
 		return
 	}
 
+	// having both children
 	if root.left != nil && root.right != nil {
 
 		if root.left.peer.currentCapacity < root.right.peer.currentCapacity {
 			leftRotate(root)
-			recursiveDelete(root.left, peer)
+			recursiveDelete(root.left, id)
 			return
 		}
 
 		rightRotate(root)
-		recursiveDelete(root.right, peer)
+		recursiveDelete(root.right, id)
 		return
 
 	}
 
+	// having single child
 	if root.right != nil {
 		root = root.right
 		return

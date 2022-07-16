@@ -51,7 +51,7 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 		return nil
 	}
 
-	network.treap.delete(parentPeer)
+	network.treap.delete(parentPeer.id)
 
 	parentPeer.children = append(parentPeer.children, peer)
 	parentPeer.currentCapacity -= 1
@@ -65,7 +65,8 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 	return nil
 }
 
-func (network *P2PNetwork) Leave() {
+func (network *P2PNetwork) Leave(id int) error {
+	return nil
 }
 
 func (network *P2PNetwork) Trace() {
