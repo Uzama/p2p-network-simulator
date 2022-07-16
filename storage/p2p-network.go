@@ -60,7 +60,9 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 		network.treap.insert(parentPeer)
 	}
 
-	network.treap.insert(peer)
+	if peer.currentCapacity > 0 {
+		network.treap.insert(peer)
+	}
 
 	return nil
 }
