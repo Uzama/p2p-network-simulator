@@ -31,12 +31,7 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 		return fmt.Errorf("id %d already reserved", node.Id)
 	}
 
-	peer := &peer{
-		id:              node.Id,
-		maxCapacity:     node.Capacity,
-		currentCapacity: node.Capacity,
-		children:        make([]*peer, 0),
-	}
+	peer := newPeer(node)
 
 	network.ids[node.Id] = struct{}{}
 
@@ -46,15 +41,19 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 		tree := newTree(peer)
 
 		network.network = append(network.network, tree)
-		network.treap.insert(peer)
+
+		if peer.currentCapacity > 0 {
+			network.treap.insert(peer)
+		}
 
 		return nil
 	}
 
+	peer.setParent(parentPeer)
+
 	network.treap.delete(parentPeer.id)
 
-	parentPeer.children = append(parentPeer.children, peer)
-	parentPeer.currentCapacity -= 1
+	parentPeer.addChild(peer)
 
 	if parentPeer.currentCapacity > 0 {
 		network.treap.insert(parentPeer)
