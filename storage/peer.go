@@ -1,6 +1,10 @@
 package storage
 
-import "p2p-network-simulator/domain/entities"
+import (
+	"errors"
+
+	"p2p-network-simulator/domain/entities"
+)
 
 type peer struct {
 	id              int
@@ -23,9 +27,15 @@ func (p *peer) setParent(parent *peer) {
 	p.parent = parent
 }
 
-func (p *peer) addChild(child *peer) {
+func (p *peer) addChild(child *peer) error {
+	if p.currentCapacity == 0 {
+		return errors.New("not enough space to add")
+	}
+
 	p.children = append(p.children, child)
 	p.currentCapacity -= 1
+
+	return nil
 }
 
 func (p *peer) removeChild(child *peer) {

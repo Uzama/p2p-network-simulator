@@ -52,11 +52,15 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 		return nil
 	}
 
+	err := parentPeer.addChild(peer)
+	if err != nil {
+		delete(network.ids, peer.id)
+		return err
+	}
+
 	peer.setParent(parentPeer)
 
 	network.treap.delete(parentPeer.id)
-
-	parentPeer.addChild(peer)
 
 	if parentPeer.currentCapacity > 0 {
 		network.treap.insert(parentPeer)

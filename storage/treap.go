@@ -28,39 +28,6 @@ func (t *treap) mostCapacityPeer() *peer {
 	return t.root.getPeer()
 }
 
-func (t *treap) print() {
-	if t.root == nil {
-		return
-	}
-
-	queue := make([]*node, 0)
-
-	queue = append(queue, t.root)
-
-	for len(queue) != 0 {
-		noOfNodes := len(queue)
-
-		for i := 0; i < noOfNodes; i++ {
-			current := queue[0]
-			queue = queue[1:]
-
-			fmt.Printf("%d(%d) ", current.peer.id, current.peer.currentCapacity)
-
-			if current.left != nil {
-				queue = append(queue, current.left)
-			}
-
-			if current.right != nil {
-				queue = append(queue, current.right)
-			}
-		}
-
-		fmt.Println()
-	}
-
-	return
-}
-
 func rightRotate(root *node) *node {
 	left := root.left
 	subTree := left.right
@@ -151,4 +118,37 @@ func recursiveDelete(root *node, id int) *node {
 	root = temp
 
 	return root
+}
+
+func (t *treap) print() {
+	if t.root == nil {
+		return
+	}
+
+	queue := make([]*node, 0)
+
+	queue = append(queue, t.root)
+
+	for len(queue) != 0 {
+		noOfNodes := len(queue)
+
+		for i := 0; i < noOfNodes; i++ {
+			current := queue[0]
+			queue = queue[1:]
+
+			fmt.Printf("%d(%d) ", current.peer.id, current.peer.currentCapacity)
+
+			if current.left != nil {
+				queue = append(queue, current.left)
+			}
+
+			if current.right != nil {
+				queue = append(queue, current.right)
+			}
+		}
+
+		fmt.Println()
+	}
+
+	return
 }
