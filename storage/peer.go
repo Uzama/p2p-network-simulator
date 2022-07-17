@@ -23,6 +23,14 @@ func (p *peer) setParent(parent *peer) {
 	p.parent = parent
 }
 
+func (p *peer) setCurrentCapacity(currentCapacity int) {
+	p.currentCapacity = currentCapacity
+}
+
+func (p *peer) setChildren(children []*peer) {
+	p.children = children
+}
+
 func (p *peer) addChild(child *peer) {
 	p.children = append(p.children, child)
 	p.currentCapacity -= 1

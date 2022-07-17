@@ -102,4 +102,13 @@ func (network *P2PNetwork) Leave(id int) error {
 }
 
 func (network *P2PNetwork) Trace() {
+	network.lock.Lock()
+
+	var topology []*tree
+
+	for _, tree := range network.topology {
+		topology = append(topology, tree.clone())
+	}
+
+	network.lock.Unlock()
 }
