@@ -6,13 +6,60 @@ import (
 	"p2p-network-simulator/domain/entities"
 )
 
-var p = newPeer(entities.Node{
+var n1 = entities.Node{
 	Id:       1,
 	Capacity: 1,
-})
+}
+
+var n2 = entities.Node{
+	Id:       2,
+	Capacity: 2,
+}
+
+var n3 = entities.Node{
+	Id:       3,
+	Capacity: 3,
+}
+
+var n4 = entities.Node{
+	Id:       4,
+	Capacity: 4,
+}
+
+var n5 = entities.Node{
+	Id:       5,
+	Capacity: 5,
+}
+
+var n6 = entities.Node{
+	Id:       6,
+	Capacity: 1,
+}
+
+var n7 = entities.Node{
+	Id:       7,
+	Capacity: 2,
+}
+
+var n8 = entities.Node{
+	Id:       8,
+	Capacity: 3,
+}
+
+var n9 = entities.Node{
+	Id:       9,
+	Capacity: 4,
+}
+
+var n10 = entities.Node{
+	Id:       10,
+	Capacity: 5,
+}
 
 func Test_newNode(t *testing.T) {
-	node := newNode(p)
+	peer := newPeer(n1)
+
+	node := newNode(peer)
 
 	if node.peer.id != 1 || node.peer.maxCapacity != 1 {
 		t.Error("something wrong")
@@ -24,7 +71,7 @@ func Test_newNode(t *testing.T) {
 }
 
 func Test_getPeer(t *testing.T) {
-	node := newNode(p)
+	node := newNode(newPeer(n1))
 
 	peer := node.getPeer()
 
