@@ -23,6 +23,6 @@ func (s Simulator) Leave(id int) error {
 	return s.network.Leave(id)
 }
 
-func (s Simulator) Trace() string {
+func (s Simulator) Trace() []string {
 	return s.network.Trace()
 }

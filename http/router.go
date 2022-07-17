@@ -16,7 +16,7 @@ func initRouter() *mux.Router {
 
 	// define endpoints
 	r.HandleFunc("/join", handler.Join).Methods(http.MethodPost)
-	r.HandleFunc("/leave", handler.Leave).Methods(http.MethodDelete)
+	r.HandleFunc("/leave/{id}", handler.Leave).Methods(http.MethodDelete)
 	r.HandleFunc("/trace", handler.Trace).Methods(http.MethodGet)
 
 	return r

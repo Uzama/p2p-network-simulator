@@ -50,7 +50,6 @@ func (hdl handler) Leave(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		err = errors.New("id not provided in request parameter")
 		log.Printf("error:%s\n", err.Error())
 
 		handleError(w, err, http.StatusBadRequest)
@@ -81,5 +80,5 @@ func (hdl handler) Trace(w http.ResponseWriter, r *http.Request) {
 	trace := hdl.usecase.Trace()
 
 	log.Println("network trace sent")
-	handle(w, "trace sent", trace, http.StatusOK)
+	handle(w, "trace recivied", trace, http.StatusOK)
 }

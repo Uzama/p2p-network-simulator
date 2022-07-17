@@ -27,6 +27,8 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 	network.lock.Lock()
 	defer network.lock.Unlock()
 
+	defer network.treap.print()
+
 	_, ok := network.ids[node.Id]
 	if ok {
 		return fmt.Errorf("id %d already reserved", node.Id)
@@ -71,6 +73,8 @@ func (network *P2PNetwork) Leave(id int) error {
 	network.lock.Lock()
 	defer network.lock.Unlock()
 
+	defer network.treap.print()
+
 	var peer *peer
 
 	for _, tree := range network.topology {
@@ -90,10 +94,12 @@ func (network *P2PNetwork) Leave(id int) error {
 
 		peer.parent.removeChild(peer)
 
-		network.treap.delete(peer.id)
 		network.treap.delete(peer.parent.id)
+		network.treap.delete(peer.id)
 
 		network.treap.insert(peer.parent)
+
+		delete(network.ids, peer.id)
 		return nil
 	}
 
@@ -102,7 +108,7 @@ func (network *P2PNetwork) Leave(id int) error {
 	return nil
 }
 
-func (network *P2PNetwork) Trace() string {
+func (network *P2PNetwork) Trace() []string {
 	network.lock.Lock()
 
 	var topology []*tree
@@ -113,16 +119,10 @@ func (network *P2PNetwork) Trace() string {
 
 	network.lock.Unlock()
 
-	var digram string = ``
+	var digram []string
 
-	for index, tree := range topology {
-		digram += tree.encode()
-
-		if index == len(topology)-1 {
-			continue
-		}
-
-		digram += fmt.Sprint(" ||||| ")
+	for _, tree := range topology {
+		digram = append(digram, tree.encode())
 	}
 
 	return digram
