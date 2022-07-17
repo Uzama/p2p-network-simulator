@@ -101,7 +101,7 @@ func (network *P2PNetwork) Leave(id int) error {
 	return nil
 }
 
-func (network *P2PNetwork) Trace() {
+func (network *P2PNetwork) Trace() string {
 	network.lock.Lock()
 
 	var topology []*tree
@@ -111,4 +111,6 @@ func (network *P2PNetwork) Trace() {
 	}
 
 	network.lock.Unlock()
+
+	return ""
 }
