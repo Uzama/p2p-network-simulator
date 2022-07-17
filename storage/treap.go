@@ -1,8 +1,7 @@
 package storage
 
 type treap struct {
-	root     *node
-	tempRoot *node
+	root *node
 }
 
 func newTreap() *treap {

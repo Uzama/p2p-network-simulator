@@ -9,16 +9,16 @@ import (
 )
 
 type P2PNetwork struct {
-	network []*tree
-	treap   *treap
-	ids     map[int]struct{}
-	lock    sync.Mutex
+	topology []*tree
+	treap    *treap
+	ids      map[int]struct{}
+	lock     sync.Mutex
 }
 
 func NewP2PNetwork() interfaces.P2PNetwork {
 	return &P2PNetwork{
-		network: make([]*tree, 0),
-		treap:   newTreap(),
+		topology: make([]*tree, 0),
+		treap:    newTreap(),
 	}
 }
 
@@ -40,7 +40,7 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 	if parentPeer == nil {
 		tree := newTree(peer)
 
-		network.network = append(network.network, tree)
+		network.topology = append(network.topology, tree)
 
 		if peer.currentCapacity > 0 {
 			network.treap.insert(peer)
@@ -67,6 +67,37 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 }
 
 func (network *P2PNetwork) Leave(id int) error {
+	network.lock.Lock()
+	defer network.lock.Unlock()
+
+	var peer *peer
+
+	for _, tree := range network.topology {
+		peer = tree.locate(id)
+
+		if peer != nil {
+			break
+		}
+	}
+
+	if peer == nil {
+		return fmt.Errorf("cannot locate id %d node", id)
+	}
+
+	// case-1: leaf node
+	if len(peer.children) == 0 {
+
+		peer.parent.removeChild(peer)
+
+		network.treap.delete(peer.id)
+		network.treap.delete(peer.parent.id)
+
+		network.treap.insert(peer.parent)
+		return nil
+	}
+
+	// implement remaining cases
+
 	return nil
 }
 

@@ -27,3 +27,18 @@ func (p *peer) addChild(child *peer) {
 	p.children = append(p.children, child)
 	p.currentCapacity -= 1
 }
+
+func (p *peer) removeChild(child *peer) {
+	var children []*peer
+
+	for _, c := range p.children {
+		if child.id == c.id {
+			continue
+		}
+
+		children = append(children, c)
+	}
+
+	p.children = children
+	p.currentCapacity += 1
+}
