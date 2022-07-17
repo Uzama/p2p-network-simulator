@@ -33,5 +33,6 @@ func handle(w http.ResponseWriter, message string, data interface{}, status int)
 	payload, _ := json.Marshal(response)
 
 	w.WriteHeader(status)
+	w.Header().Set("content-type", "application/json")
 	w.Write(payload)
 }

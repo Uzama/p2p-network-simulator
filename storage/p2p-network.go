@@ -19,6 +19,7 @@ func NewP2PNetwork() interfaces.P2PNetwork {
 	return &P2PNetwork{
 		topology: make([]*tree, 0),
 		treap:    newTreap(),
+		ids:      make(map[int]struct{}),
 	}
 }
 
@@ -112,5 +113,17 @@ func (network *P2PNetwork) Trace() string {
 
 	network.lock.Unlock()
 
-	return ""
+	var digram string = ``
+
+	for index, tree := range topology {
+		digram += tree.encode()
+
+		if index == len(topology)-1 {
+			continue
+		}
+
+		digram += fmt.Sprint(" ||||| ")
+	}
+
+	return digram
 }

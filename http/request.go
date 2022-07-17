@@ -33,8 +33,8 @@ func decodeRequest(r *http.Request) (entities.Node, error) {
 		return node, errors.New("id must be a positive integer")
 	}
 
-	if node.Capacity < 1 {
-		return node, errors.New("capacity must be a positive integer")
+	if node.Capacity < 0 {
+		return node, errors.New("capacity must be none negative")
 	}
 
 	return node, nil

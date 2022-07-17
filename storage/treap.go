@@ -1,19 +1,23 @@
 package storage
 
+import "fmt"
+
 type treap struct {
 	root *node
 }
 
 func newTreap() *treap {
-	return &treap{}
+	return &treap{
+		root: nil,
+	}
 }
 
 func (t *treap) insert(peer *peer) {
-	recursiveInsert(t.root, peer)
+	t.root = recursiveInsert(t.root, peer)
 }
 
 func (t *treap) delete(id int) {
-	recursiveDelete(t.root, id)
+	t.root = recursiveDelete(t.root, id)
 }
 
 func (t *treap) mostCapacityPeer() *peer {
@@ -24,93 +28,127 @@ func (t *treap) mostCapacityPeer() *peer {
 	return t.root.getPeer()
 }
 
-func rightRotate(root *node) {
+func (t *treap) print() {
+	if t.root == nil {
+		return
+	}
+
+	queue := make([]*node, 0)
+
+	queue = append(queue, t.root)
+
+	for len(queue) != 0 {
+		noOfNodes := len(queue)
+
+		for i := 0; i < noOfNodes; i++ {
+			current := queue[0]
+			queue = queue[1:]
+
+			fmt.Printf("%d(%d) ", current.peer.id, current.peer.currentCapacity)
+
+			if current.left != nil {
+				queue = append(queue, current.left)
+			}
+
+			if current.right != nil {
+				queue = append(queue, current.right)
+			}
+		}
+
+		fmt.Println()
+	}
+
+	return
+}
+
+func rightRotate(root *node) *node {
 	left := root.left
 	subTree := left.right
 
 	left.right = root
 	root.left = subTree
 
-	root = left
+	return left
 }
 
-func leftRotate(root *node) {
+func leftRotate(root *node) *node {
 	right := root.right
 	subTree := right.left
 
 	right.left = root
 	root.right = subTree
 
-	root = right
+	return right
 }
 
-func recursiveInsert(root *node, peer *peer) {
+func recursiveInsert(root *node, peer *peer) *node {
 	if root == nil {
-		root = newNode(peer)
-		return
+		return newNode(peer)
 	}
 
 	if peer.id <= root.peer.id {
 
-		recursiveInsert(root.left, peer)
+		root.left = recursiveInsert(root.left, peer)
 
-		heapPropertyViolated := root.left.peer.currentCapacity > root.peer.currentCapacity
-		if root.left != nil && heapPropertyViolated {
-			rightRotate(root)
+		if root.left != nil && root.left.peer.currentCapacity > root.peer.currentCapacity {
+			root = rightRotate(root)
 		}
 
-		return
+		return root
 	}
 
-	recursiveInsert(root.right, peer)
+	root.right = recursiveInsert(root.right, peer)
 
-	heapPropertyViolated := root.right.peer.currentCapacity > root.peer.currentCapacity
-	if root.right != nil && heapPropertyViolated {
-		leftRotate(root)
+	if root.right != nil && root.right.peer.currentCapacity > root.peer.currentCapacity {
+		root = leftRotate(root)
 	}
+
+	return root
 }
 
-func recursiveDelete(root *node, id int) {
+func recursiveDelete(root *node, id int) *node {
 	if root == nil {
-		return
+		return root
 	}
 
 	if id < root.peer.id {
-		recursiveDelete(root.left, id)
-		return
+		root.left = recursiveDelete(root.left, id)
+		return root
 	}
 
 	if id > root.peer.id {
-		recursiveDelete(root.right, id)
-		return
+		root.right = recursiveDelete(root.right, id)
+		return root
 	}
 
 	// no children
 	if root.left == nil && root.right == nil {
-		root = nil
-		return
+		return nil
 	}
 
 	// having both children
 	if root.left != nil && root.right != nil {
 
 		if root.left.peer.currentCapacity < root.right.peer.currentCapacity {
-			leftRotate(root)
-			recursiveDelete(root.left, id)
-			return
+			root = leftRotate(root)
+			root.left = recursiveDelete(root.left, id)
+			return root
 		}
 
-		rightRotate(root)
-		recursiveDelete(root.right, id)
-		return
+		root = rightRotate(root)
+		root.right = recursiveDelete(root.right, id)
+		return root
 
 	}
+
+	temp := root.left
 
 	// having single child
 	if root.right != nil {
-		root = root.right
-		return
+		temp = root.right
 	}
 
-	root = root.left
+	root = temp
+
+	return root
 }

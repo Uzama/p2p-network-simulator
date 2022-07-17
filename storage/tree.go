@@ -1,6 +1,10 @@
 package storage
 
-import "p2p-network-simulator/domain/entities"
+import (
+	"strconv"
+
+	"p2p-network-simulator/domain/entities"
+)
 
 type tree struct {
 	root *peer
@@ -67,4 +71,31 @@ func recursiveClone(root *peer) *peer {
 	peer.setChildren(children)
 
 	return peer
+}
+
+func (t *tree) encode() string {
+	if t.root == nil {
+		return ""
+	}
+
+	return recursiveEncode(t.root)
+}
+
+func recursiveEncode(root *peer) string {
+	if root == nil {
+		return ""
+	}
+
+	current := root.maxCapacity - root.currentCapacity
+	capacity := "(" + strconv.Itoa(current) + "/" + strconv.Itoa(root.maxCapacity) + ")"
+
+	temp := strconv.Itoa(root.id) + capacity
+	temp += "[ "
+
+	for _, child := range root.children {
+		temp += recursiveEncode(child)
+	}
+
+	temp += " ]"
+	return temp
 }
