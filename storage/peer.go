@@ -35,6 +35,8 @@ func (p *peer) addChild(child *peer) error {
 	p.children = append(p.children, child)
 	p.currentCapacity -= 1
 
+	child.setParent(p)
+
 	return nil
 }
 

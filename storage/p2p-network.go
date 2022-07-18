@@ -58,8 +58,6 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 		return err
 	}
 
-	peer.setParent(parentPeer)
-
 	network.treap.delete(parentPeer.id)
 
 	if parentPeer.currentCapacity > 0 {

@@ -1,7 +1,10 @@
 package storage
 
 import (
+	"errors"
 	"testing"
+
+	"p2p-network-simulator/domain/entities"
 )
 
 var (
@@ -18,35 +21,110 @@ var (
 )
 
 func Test_newPeer(t *testing.T) {
-	peer := newPeer(n2)
+	testTable := []struct {
+		name     string
+		node     entities.Node
+		expected *peer
+	}{
+		{
+			name:     "happy case 1",
+			node:     n1,
+			expected: p1,
+		},
+		{
+			name:     "happy case 2",
+			node:     n7,
+			expected: p7,
+		},
+	}
 
-	if peer.id != 2 || peer.maxCapacity != 2 || peer.currentCapacity != 2 || peer.parent != nil {
-		t.Error("something wrong")
+	for _, testCase := range testTable {
+		t.Run(testCase.name, func(t *testing.T) {
+			result := newPeer(testCase.node)
+
+			if result.id != testCase.expected.id {
+				t.Errorf("expected %d, but got %d", testCase.expected.id, result.id)
+			}
+		})
 	}
 }
 
 func Test_setParent(t *testing.T) {
-	p2.setParent(p3)
+	testTable := []struct {
+		name   string
+		child  *peer
+		parent *peer
+	}{
+		{
+			name:   "happy case",
+			child:  p2,
+			parent: p1,
+		},
+	}
 
-	if p2.parent.id != 3 || p2.parent.maxCapacity != 3 || p2.parent.currentCapacity != 3 {
-		t.Error("something wrong")
+	for _, testCase := range testTable {
+		t.Run(testCase.name, func(t *testing.T) {
+			testCase.child.setParent(testCase.parent)
+
+			if testCase.child.parent.id != testCase.parent.id {
+				t.Errorf("expected %d, but got %d", testCase.parent.id, testCase.child.parent.id)
+			}
+		})
 	}
 }
 
 func Test_addChild(t *testing.T) {
-	err := p2.addChild(p3)
-	if err != nil {
-		t.Error("error not expected")
+	testTable := []struct {
+		name     string
+		child    *peer
+		parent   *peer
+		expected error
+	}{
+		{
+			name:     "happy case 1",
+			child:    p3,
+			parent:   p2,
+			expected: nil,
+		},
+		{
+			name:     "happy case 2",
+			child:    p4,
+			parent:   p2,
+			expected: nil,
+		},
+		{
+			name:     "not enough space",
+			child:    p5,
+			parent:   p2,
+			expected: errors.New("not enough space to add"),
+		},
 	}
 
-	if p2.currentCapacity != 1 || len(p2.children) != 1 {
-		t.Error("something wrong")
-	}
+	for _, testCase := range testTable {
+		t.Run(testCase.name, func(t *testing.T) {
+			result := testCase.parent.addChild(testCase.child)
 
-	p2.addChild(p4)
-	err = p2.addChild(p5)
+			if result == nil && testCase.expected != nil {
+				t.Errorf("expected %s, but got %v", testCase.expected.Error(), result)
+			}
 
-	if err.Error() != "not enough space to add" {
-		t.Error("expecting error")
+			if result != nil && testCase.expected == nil {
+				t.Errorf("expected %v, but got %s", testCase.expected, result.Error())
+			}
+
+			if result != nil && testCase.expected != nil && result.Error() != testCase.expected.Error() {
+				t.Errorf("expected %s, but got %s", testCase.expected.Error(), result.Error())
+			}
+
+			if result == nil && testCase.expected == nil {
+
+				expectedCapacity := testCase.parent.maxCapacity - len(testCase.parent.children)
+
+				if testCase.parent.currentCapacity != expectedCapacity {
+					t.Errorf("expected %d, but got %d", expectedCapacity, testCase.parent.currentCapacity)
+				}
+
+			}
+		})
 	}
 }
