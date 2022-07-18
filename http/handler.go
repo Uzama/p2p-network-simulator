@@ -79,6 +79,6 @@ func (hdl handler) Leave(w http.ResponseWriter, r *http.Request) {
 func (hdl handler) Trace(w http.ResponseWriter, r *http.Request) {
 	trace := hdl.usecase.Trace()
 
-	log.Println("network trace sent")
+	log.Println("trace:network trace sent")
 	handle(w, "trace recivied", trace, http.StatusOK)
 }
