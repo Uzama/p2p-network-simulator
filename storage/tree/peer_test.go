@@ -1,4 +1,4 @@
-package storage
+package tree
 
 import (
 	"errors"
@@ -8,23 +8,34 @@ import (
 )
 
 var (
-	p1  = newPeer(n1)
-	p2  = newPeer(n2)
-	p3  = newPeer(n3)
-	p4  = newPeer(n5)
-	p5  = newPeer(n5)
-	p6  = newPeer(n6)
-	p7  = newPeer(n7)
-	p8  = newPeer(n8)
-	p9  = newPeer(n9)
-	p10 = newPeer(n10)
+	n1  = entities.Node{Id: 1, Capacity: 1}
+	n2  = entities.Node{Id: 2, Capacity: 2}
+	n3  = entities.Node{Id: 3, Capacity: 3}
+	n4  = entities.Node{Id: 4, Capacity: 4}
+	n5  = entities.Node{Id: 5, Capacity: 5}
+	n6  = entities.Node{Id: 6, Capacity: 1}
+	n7  = entities.Node{Id: 7, Capacity: 2}
+	n8  = entities.Node{Id: 8, Capacity: 3}
+	n9  = entities.Node{Id: 9, Capacity: 4}
+	n10 = entities.Node{Id: 10, Capacity: 5}
+
+	p1  = NewPeer(n1)
+	p2  = NewPeer(n2)
+	p3  = NewPeer(n3)
+	p4  = NewPeer(n5)
+	p5  = NewPeer(n5)
+	p6  = NewPeer(n6)
+	p7  = NewPeer(n7)
+	p8  = NewPeer(n8)
+	p9  = NewPeer(n9)
+	p10 = NewPeer(n10)
 )
 
 func Test_newPeer(t *testing.T) {
 	testTable := []struct {
 		name     string
 		node     entities.Node
-		expected *peer
+		expected *Peer
 	}{
 		{
 			name:     "happy case 1",
@@ -40,10 +51,10 @@ func Test_newPeer(t *testing.T) {
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
-			result := newPeer(testCase.node)
+			result := NewPeer(testCase.node)
 
-			if result.id != testCase.expected.id {
-				t.Errorf("expected %d, but got %d", testCase.expected.id, result.id)
+			if result.Id != testCase.expected.Id {
+				t.Errorf("expected %d, but got %d", testCase.expected.Id, result.Id)
 			}
 		})
 	}
@@ -52,8 +63,8 @@ func Test_newPeer(t *testing.T) {
 func Test_setParent(t *testing.T) {
 	testTable := []struct {
 		name   string
-		child  *peer
-		parent *peer
+		child  *Peer
+		parent *Peer
 	}{
 		{
 			name:   "happy case",
@@ -66,8 +77,8 @@ func Test_setParent(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			testCase.child.setParent(testCase.parent)
 
-			if testCase.child.parent.id != testCase.parent.id {
-				t.Errorf("expected %d, but got %d", testCase.parent.id, testCase.child.parent.id)
+			if testCase.child.Parent.Id != testCase.parent.Id {
+				t.Errorf("expected %d, but got %d", testCase.parent.Id, testCase.child.Parent.Id)
 			}
 		})
 	}
@@ -76,8 +87,8 @@ func Test_setParent(t *testing.T) {
 func Test_addChild(t *testing.T) {
 	testTable := []struct {
 		name     string
-		child    *peer
-		parent   *peer
+		child    *Peer
+		parent   *Peer
 		expected error
 	}{
 		{
@@ -102,7 +113,7 @@ func Test_addChild(t *testing.T) {
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
-			result := testCase.parent.addChild(testCase.child)
+			result := testCase.parent.AddChild(testCase.child)
 
 			if result == nil && testCase.expected != nil {
 				t.Errorf("expected %s, but got %v", testCase.expected.Error(), result)
@@ -118,10 +129,10 @@ func Test_addChild(t *testing.T) {
 
 			if result == nil && testCase.expected == nil {
 
-				expectedCapacity := testCase.parent.maxCapacity - len(testCase.parent.children)
+				expectedCapacity := testCase.parent.MaxCapacity - len(testCase.parent.Children)
 
-				if testCase.parent.currentCapacity != expectedCapacity {
-					t.Errorf("expected %d, but got %d", expectedCapacity, testCase.parent.currentCapacity)
+				if testCase.parent.CurrentCapacity != expectedCapacity {
+					t.Errorf("expected %d, but got %d", expectedCapacity, testCase.parent.CurrentCapacity)
 				}
 
 			}

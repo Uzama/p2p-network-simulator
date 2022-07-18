@@ -1,26 +1,30 @@
-package storage
+package treap
 
-import "fmt"
+import (
+	"fmt"
 
-type treap struct {
+	"p2p-network-simulator/storage/tree"
+)
+
+type Treap struct {
 	root *node
 }
 
-func newTreap() *treap {
-	return &treap{
+func NewTreap() *Treap {
+	return &Treap{
 		root: nil,
 	}
 }
 
-func (t *treap) insert(peer *peer) {
+func (t *Treap) Insert(peer *tree.Peer) {
 	t.root = recursiveInsert(t.root, peer)
 }
 
-func (t *treap) delete(id int) {
+func (t *Treap) Delete(id int) {
 	t.root = recursiveDelete(t.root, id)
 }
 
-func (t *treap) mostCapacityPeer() *peer {
+func (t *Treap) MostCapacityPeer() *tree.Peer {
 	if t.root == nil {
 		return nil
 	}
@@ -48,16 +52,16 @@ func leftRotate(root *node) *node {
 	return right
 }
 
-func recursiveInsert(root *node, peer *peer) *node {
+func recursiveInsert(root *node, peer *tree.Peer) *node {
 	if root == nil {
 		return newNode(peer)
 	}
 
-	if peer.id <= root.peer.id {
+	if peer.Id <= root.peer.Id {
 
 		root.left = recursiveInsert(root.left, peer)
 
-		if root.left != nil && root.left.peer.currentCapacity > root.peer.currentCapacity {
+		if root.left != nil && root.left.peer.CurrentCapacity > root.peer.CurrentCapacity {
 			root = rightRotate(root)
 		}
 
@@ -66,7 +70,7 @@ func recursiveInsert(root *node, peer *peer) *node {
 
 	root.right = recursiveInsert(root.right, peer)
 
-	if root.right != nil && root.right.peer.currentCapacity > root.peer.currentCapacity {
+	if root.right != nil && root.right.peer.CurrentCapacity > root.peer.CurrentCapacity {
 		root = leftRotate(root)
 	}
 
@@ -78,12 +82,12 @@ func recursiveDelete(root *node, id int) *node {
 		return root
 	}
 
-	if id < root.peer.id {
+	if id < root.peer.Id {
 		root.left = recursiveDelete(root.left, id)
 		return root
 	}
 
-	if id > root.peer.id {
+	if id > root.peer.Id {
 		root.right = recursiveDelete(root.right, id)
 		return root
 	}
@@ -96,7 +100,7 @@ func recursiveDelete(root *node, id int) *node {
 	// having both children
 	if root.left != nil && root.right != nil {
 
-		if root.left.peer.currentCapacity < root.right.peer.currentCapacity {
+		if root.left.peer.CurrentCapacity < root.right.peer.CurrentCapacity {
 			root = leftRotate(root)
 			root.left = recursiveDelete(root.left, id)
 			return root
@@ -120,7 +124,7 @@ func recursiveDelete(root *node, id int) *node {
 	return root
 }
 
-func (t *treap) print() {
+func (t *Treap) Print() {
 	if t.root == nil {
 		return
 	}
@@ -136,7 +140,7 @@ func (t *treap) print() {
 			current := queue[0]
 			queue = queue[1:]
 
-			fmt.Printf("%d(%d) ", current.peer.id, current.peer.currentCapacity)
+			fmt.Printf("%d(%d) ", current.peer.Id, current.peer.CurrentCapacity)
 
 			if current.left != nil {
 				queue = append(queue, current.left)

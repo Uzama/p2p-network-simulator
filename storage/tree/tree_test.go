@@ -1,4 +1,4 @@
-package storage
+package tree
 
 import (
 	"testing"
@@ -14,31 +14,31 @@ t1:
 */
 
 var (
-	t1 = newTree(p7)
-	t2 = newTree(nil)
-	t3 = &tree{root: p3}
-	t4 = &tree{root: p4}
+	t1 = NewTree(p7)
+	t2 = NewTree(nil)
+	t3 = &Tree{root: p3}
+	t4 = &Tree{root: p4}
 )
 
 func init() {
-	t1.root.addChild(p6)
+	t1.root.AddChild(p6)
 	p6.setParent(t1.root)
 
-	t1.root.addChild(p8)
+	t1.root.AddChild(p8)
 	p8.setParent(t1.root)
 
-	p8.addChild(p9)
+	p8.AddChild(p9)
 	p9.setParent(p8)
 
-	p8.addChild(p10)
+	p8.AddChild(p10)
 	p10.setParent(p8)
 }
 
 func Test_newTree(t *testing.T) {
 	testTable := []struct {
 		name     string
-		peer     *peer
-		expected *tree
+		peer     *Peer
+		expected *Tree
 	}{
 		{
 			name:     "nil root",
@@ -59,18 +59,18 @@ func Test_newTree(t *testing.T) {
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
-			result := newTree(testCase.peer)
+			result := NewTree(testCase.peer)
 
 			if result.root == nil && testCase.expected.root != nil {
-				t.Errorf("expected %d , but got %v", testCase.expected.root.id, result.root)
+				t.Errorf("expected %d , but got %v", testCase.expected.root.Id, result.root)
 			}
 
 			if result.root != nil && testCase.expected.root == nil {
-				t.Errorf("expected %v, but got %d", testCase.expected.root, result.root.id)
+				t.Errorf("expected %v, but got %d", testCase.expected.root, result.root.Id)
 			}
 
-			if result.root != nil && testCase.expected.root != nil && result.root.id != testCase.expected.root.id {
-				t.Errorf("expected %d, but got %d", testCase.expected.root.id, result.root.id)
+			if result.root != nil && testCase.expected.root != nil && result.root.Id != testCase.expected.root.Id {
+				t.Errorf("expected %d, but got %d", testCase.expected.root.Id, result.root.Id)
 			}
 		})
 	}
@@ -79,9 +79,9 @@ func Test_newTree(t *testing.T) {
 func Test_locate(t *testing.T) {
 	testTable := []struct {
 		name     string
-		tree     *tree
+		tree     *Tree
 		id       int
-		expected *peer
+		expected *Peer
 	}{
 		{
 			name:     "not exists id",
@@ -111,18 +111,18 @@ func Test_locate(t *testing.T) {
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
-			result := testCase.tree.locate(testCase.id)
+			result := testCase.tree.Locate(testCase.id)
 
 			if result == nil && testCase.expected != nil {
-				t.Errorf("expected %d, but got %v", testCase.expected.id, result)
+				t.Errorf("expected %d, but got %v", testCase.expected.Id, result)
 			}
 
 			if result != nil && testCase.expected == nil {
-				t.Errorf("expected %v, but got %d", testCase.expected, result.id)
+				t.Errorf("expected %v, but got %d", testCase.expected, result.Id)
 			}
 
-			if result != nil && testCase.expected != nil && result.id != testCase.expected.id {
-				t.Errorf("expected %d, but got %d", testCase.expected.id, result.id)
+			if result != nil && testCase.expected != nil && result.Id != testCase.expected.Id {
+				t.Errorf("expected %d, but got %d", testCase.expected.Id, result.Id)
 			}
 		})
 	}
@@ -131,7 +131,7 @@ func Test_locate(t *testing.T) {
 func Test_encode(t *testing.T) {
 	testTable := []struct {
 		name     string
-		tree     *tree
+		tree     *Tree
 		expected string
 	}{
 		{
@@ -153,7 +153,7 @@ func Test_encode(t *testing.T) {
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
-			result := testCase.tree.encode()
+			result := testCase.tree.Encode()
 
 			if result != testCase.expected {
 				t.Errorf("expected %s, but got %s", testCase.expected, result)

@@ -1,9 +1,10 @@
-package storage
+package treap
 
 import (
 	"testing"
 
 	"p2p-network-simulator/domain/entities"
+	"p2p-network-simulator/storage/tree"
 )
 
 var (
@@ -17,6 +18,17 @@ var (
 	n8  = entities.Node{Id: 8, Capacity: 3}
 	n9  = entities.Node{Id: 9, Capacity: 4}
 	n10 = entities.Node{Id: 10, Capacity: 5}
+
+	p1  = tree.NewPeer(n1)
+	p2  = tree.NewPeer(n2)
+	p3  = tree.NewPeer(n3)
+	p4  = tree.NewPeer(n5)
+	p5  = tree.NewPeer(n5)
+	p6  = tree.NewPeer(n6)
+	p7  = tree.NewPeer(n7)
+	p8  = tree.NewPeer(n8)
+	p9  = tree.NewPeer(n9)
+	p10 = tree.NewPeer(n10)
 
 	node0  = &node{}
 	node1  = &node{peer: p1}
@@ -34,7 +46,7 @@ var (
 func Test_newNode(t *testing.T) {
 	testTable := []struct {
 		name     string
-		peer     *peer
+		peer     *tree.Peer
 		expected *node
 	}{
 		{
@@ -59,15 +71,15 @@ func Test_newNode(t *testing.T) {
 			result := newNode(testCase.peer)
 
 			if result.peer == nil && testCase.expected.peer != nil {
-				t.Errorf("expected %d , but got %v", testCase.expected.peer.id, result.peer)
+				t.Errorf("expected %d , but got %v", testCase.expected.peer.Id, result.peer)
 			}
 
 			if result.peer != nil && testCase.expected.peer == nil {
-				t.Errorf("expected %v, but got %d", testCase.expected.peer, result.peer.id)
+				t.Errorf("expected %v, but got %d", testCase.expected.peer, result.peer.Id)
 			}
 
-			if result.peer != nil && testCase.expected.peer != nil && result.peer.id != testCase.expected.peer.id {
-				t.Errorf("expected %d, but got %d", testCase.expected.peer.id, result.peer.id)
+			if result.peer != nil && testCase.expected.peer != nil && result.peer.Id != testCase.expected.peer.Id {
+				t.Errorf("expected %d, but got %d", testCase.expected.peer.Id, result.peer.Id)
 			}
 		})
 	}
@@ -77,7 +89,7 @@ func Test_getPeer(t *testing.T) {
 	testTable := []struct {
 		name     string
 		node     *node
-		expected *peer
+		expected *tree.Peer
 	}{
 		{
 			name:     "happy case",
@@ -96,15 +108,15 @@ func Test_getPeer(t *testing.T) {
 			result := testCase.node.getPeer()
 
 			if result == nil && testCase.expected != nil {
-				t.Errorf("expected %d, but got %v", testCase.expected.id, result)
+				t.Errorf("expected %d, but got %v", testCase.expected.Id, result)
 			}
 
 			if result != nil && testCase.expected == nil {
-				t.Errorf("expected %v, but got %d", testCase.expected, result.id)
+				t.Errorf("expected %v, but got %d", testCase.expected, result.Id)
 			}
 
-			if result != nil && testCase.expected != nil && result.id != testCase.expected.id {
-				t.Errorf("expected %d, but got %d", testCase.expected.id, result.id)
+			if result != nil && testCase.expected != nil && result.Id != testCase.expected.Id {
+				t.Errorf("expected %d, but got %d", testCase.expected.Id, result.Id)
 			}
 		})
 	}

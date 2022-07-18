@@ -6,19 +6,21 @@ import (
 
 	"p2p-network-simulator/domain/entities"
 	"p2p-network-simulator/domain/interfaces"
+	"p2p-network-simulator/storage/treap"
+	"p2p-network-simulator/storage/tree"
 )
 
 type P2PNetwork struct {
-	topology []*tree
-	treap    *treap
+	topology []*tree.Tree
+	treap    *treap.Treap
 	ids      map[int]struct{}
 	lock     sync.Mutex
 }
 
 func NewP2PNetwork() interfaces.P2PNetwork {
 	return &P2PNetwork{
-		topology: make([]*tree, 0),
-		treap:    newTreap(),
+		topology: make([]*tree.Tree, 0),
+		treap:    treap.NewTreap(),
 		ids:      make(map[int]struct{}),
 	}
 }
@@ -27,45 +29,45 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 	network.lock.Lock()
 	defer network.lock.Unlock()
 
-	defer network.treap.print()
+	defer network.treap.Print()
 
 	_, ok := network.ids[node.Id]
 	if ok {
 		return fmt.Errorf("id %d already reserved", node.Id)
 	}
 
-	peer := newPeer(node)
+	peer := tree.NewPeer(node)
 
 	network.ids[node.Id] = struct{}{}
 
-	parentPeer := network.treap.mostCapacityPeer()
+	parentPeer := network.treap.MostCapacityPeer()
 
 	if parentPeer == nil {
-		tree := newTree(peer)
+		tree := tree.NewTree(peer)
 
 		network.topology = append(network.topology, tree)
 
-		if peer.currentCapacity > 0 {
-			network.treap.insert(peer)
+		if peer.CurrentCapacity > 0 {
+			network.treap.Insert(peer)
 		}
 
 		return nil
 	}
 
-	err := parentPeer.addChild(peer)
+	err := parentPeer.AddChild(peer)
 	if err != nil {
-		delete(network.ids, peer.id)
+		delete(network.ids, peer.Id)
 		return err
 	}
 
-	network.treap.delete(parentPeer.id)
+	network.treap.Delete(parentPeer.Id)
 
-	if parentPeer.currentCapacity > 0 {
-		network.treap.insert(parentPeer)
+	if parentPeer.CurrentCapacity > 0 {
+		network.treap.Insert(parentPeer)
 	}
 
-	if peer.currentCapacity > 0 {
-		network.treap.insert(peer)
+	if peer.CurrentCapacity > 0 {
+		network.treap.Insert(peer)
 	}
 
 	return nil
@@ -75,12 +77,12 @@ func (network *P2PNetwork) Leave(id int) error {
 	network.lock.Lock()
 	defer network.lock.Unlock()
 
-	defer network.treap.print()
+	defer network.treap.Print()
 
-	var peer *peer
+	var peer *tree.Peer
 
 	for _, tree := range network.topology {
-		peer = tree.locate(id)
+		peer = tree.Locate(id)
 
 		if peer != nil {
 			break
@@ -92,16 +94,16 @@ func (network *P2PNetwork) Leave(id int) error {
 	}
 
 	// case-1: leaf node
-	if len(peer.children) == 0 {
+	if len(peer.Children) == 0 {
 
-		peer.parent.removeChild(peer)
+		peer.Parent.RemoveChild(peer)
 
-		network.treap.delete(peer.parent.id)
-		network.treap.delete(peer.id)
+		network.treap.Delete(peer.Parent.Id)
+		network.treap.Delete(peer.Id)
 
-		network.treap.insert(peer.parent)
+		network.treap.Insert(peer.Parent)
 
-		delete(network.ids, peer.id)
+		delete(network.ids, peer.Id)
 		return nil
 	}
 
@@ -117,7 +119,7 @@ func (network *P2PNetwork) Trace() []string {
 	var digram []string
 
 	for _, tree := range network.topology {
-		digram = append(digram, tree.encode())
+		digram = append(digram, tree.Encode())
 	}
 
 	return digram
