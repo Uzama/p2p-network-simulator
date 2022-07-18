@@ -71,18 +71,6 @@ func Test_newNode(t *testing.T) {
 			}
 		})
 	}
-
-	peer := newPeer(n1)
-
-	node := newNode(peer)
-
-	if node.peer.id != 1 || node.peer.maxCapacity != 1 {
-		t.Error("something wrong")
-	}
-
-	if node.left != nil || node.right != nil {
-		t.Error("left and right must be nil")
-	}
 }
 
 func Test_getPeer(t *testing.T) {
