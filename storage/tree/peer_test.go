@@ -75,7 +75,7 @@ func Test_setParent(t *testing.T) {
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
-			testCase.child.setParent(testCase.parent)
+			testCase.child.SetParent(testCase.parent)
 
 			if testCase.child.Parent.Id != testCase.parent.Id {
 				t.Errorf("expected %d, but got %d", testCase.parent.Id, testCase.child.Parent.Id)

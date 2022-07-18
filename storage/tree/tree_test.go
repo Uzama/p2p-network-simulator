@@ -22,16 +22,16 @@ var (
 
 func init() {
 	t1.root.AddChild(p6)
-	p6.setParent(t1.root)
+	p6.SetParent(t1.root)
 
 	t1.root.AddChild(p8)
-	p8.setParent(t1.root)
+	p8.SetParent(t1.root)
 
 	p8.AddChild(p9)
-	p9.setParent(p8)
+	p9.SetParent(p8)
 
 	p8.AddChild(p10)
-	p10.setParent(p8)
+	p10.SetParent(p8)
 }
 
 func Test_newTree(t *testing.T) {

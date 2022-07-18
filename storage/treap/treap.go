@@ -57,7 +57,11 @@ func recursiveInsert(root *node, peer *tree.Peer) *node {
 		return newNode(peer)
 	}
 
-	if peer.Id <= root.peer.Id {
+	if peer.Id == root.peer.Id {
+		return root
+	}
+
+	if peer.Id < root.peer.Id {
 
 		root.left = recursiveInsert(root.left, peer)
 

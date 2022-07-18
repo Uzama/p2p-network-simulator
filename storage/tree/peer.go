@@ -31,7 +31,7 @@ func (p *Peer) AddChild(child *Peer) error {
 	p.Children = append(p.Children, child)
 	p.CurrentCapacity -= 1
 
-	child.setParent(p)
+	child.SetParent(p)
 
 	return nil
 }
@@ -49,8 +49,10 @@ func (p *Peer) RemoveChild(child *Peer) {
 
 	p.Children = children
 	p.CurrentCapacity += 1
+
+	child.SetParent(nil)
 }
 
-func (p *Peer) setParent(parent *Peer) {
+func (p *Peer) SetParent(parent *Peer) {
 	p.Parent = parent
 }

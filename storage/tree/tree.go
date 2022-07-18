@@ -14,6 +14,14 @@ func NewTree(peer *Peer) *Tree {
 	}
 }
 
+func (t *Tree) GetRoot() *Peer {
+	return t.root
+}
+
+func (t *Tree) SetRoot(peer *Peer) {
+	t.root = peer
+}
+
 func (t *Tree) Locate(id int) *Peer {
 	if t.root == nil {
 		return nil
@@ -64,8 +72,12 @@ func recursiveEncode(root *Peer) string {
 
 	temp += "[ "
 
-	for _, child := range root.Children {
+	for index, child := range root.Children {
 		temp += recursiveEncode(child)
+
+		if index != len(root.Children)-1 {
+			temp += " "
+		}
 	}
 
 	temp += " ]"
