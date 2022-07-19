@@ -107,8 +107,8 @@ func TestAddChild(t *testing.T) {
 
 			expectedCapacity := testCase.parent.MaxCapacity - len(testCase.parent.Children)
 
-			if testCase.parent.CurrentCapacity != expectedCapacity {
-				t.Errorf("expected %d, but got %d", expectedCapacity, testCase.parent.CurrentCapacity)
+			if testCase.parent.Capacity != expectedCapacity {
+				t.Errorf("expected %d, but got %d", expectedCapacity, testCase.parent.Capacity)
 			}
 
 			if testCase.child.Parent.Id != testCase.parent.Id {
@@ -143,17 +143,17 @@ func TestRemoveChild(t *testing.T) {
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
-			currentCapacity := testCase.parent.CurrentCapacity
+			currentCapacity := testCase.parent.Capacity
 
 			testCase.parent.RemoveChild(testCase.child)
 
 			expectedCapacity := testCase.parent.MaxCapacity - len(testCase.parent.Children)
 
-			if testCase.parent.CurrentCapacity != expectedCapacity {
-				t.Errorf("expected %d, but got %d", expectedCapacity, testCase.parent.CurrentCapacity)
+			if testCase.parent.Capacity != expectedCapacity {
+				t.Errorf("expected %d, but got %d", expectedCapacity, testCase.parent.Capacity)
 			}
 
-			if testCase.parent.CurrentCapacity != currentCapacity && testCase.child.Parent != nil {
+			if testCase.parent.Capacity != currentCapacity && testCase.child.Parent != nil {
 				t.Errorf("expected nil, but got %d", testCase.child.Parent.Id)
 			}
 		})

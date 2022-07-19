@@ -177,7 +177,7 @@ func TestDelete(t *testing.T) {
 	}
 }
 
-func TestMostCapacityPeer(t *testing.T) {
+func TestGet(t *testing.T) {
 	testTable := []struct {
 		name     string
 		treap    *Treap
@@ -197,7 +197,7 @@ func TestMostCapacityPeer(t *testing.T) {
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
-			result := testCase.treap.MostCapacityPeer()
+			result := testCase.treap.Get()
 
 			if result == nil && testCase.expected != nil {
 				t.Errorf("expected %d, but got %v", testCase.expected.Id, result)

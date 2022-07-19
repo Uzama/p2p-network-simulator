@@ -5,19 +5,19 @@ import (
 )
 
 type Peer struct {
-	Id              int
-	MaxCapacity     int
-	CurrentCapacity int
-	Parent          *Peer
-	Children        []*Peer
+	Id          int
+	MaxCapacity int
+	Capacity    int
+	Parent      *Peer
+	Children    []*Peer
 }
 
 func NewPeer(node entities.Node) *Peer {
 	return &Peer{
-		Id:              node.Id,
-		MaxCapacity:     node.Capacity,
-		CurrentCapacity: node.Capacity,
-		Children:        make([]*Peer, 0),
+		Id:          node.Id,
+		MaxCapacity: node.Capacity,
+		Capacity:    node.Capacity,
+		Children:    make([]*Peer, 0),
 	}
 }
 
@@ -27,7 +27,7 @@ func (p *Peer) SetParent(parent *Peer) {
 
 func (p *Peer) AddChild(child *Peer) {
 	p.Children = append(p.Children, child)
-	p.CurrentCapacity -= 1
+	p.Capacity -= 1
 
 	child.SetParent(p)
 }
@@ -52,7 +52,7 @@ func (p *Peer) RemoveChild(child *Peer) {
 		return
 	}
 
-	p.CurrentCapacity += 1
+	p.Capacity += 1
 
 	child.SetParent(nil)
 }

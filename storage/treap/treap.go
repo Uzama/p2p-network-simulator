@@ -6,32 +6,44 @@ import (
 	"p2p-network-simulator/storage/tree"
 )
 
+// treap: binary search tree + heap (max heap)
+// binary search tree property: left sub tree keys are less than root + right sub tree keys
+// heap property: children priorities are less than the parent priority
+// use treap to keep track of peers which has most capacity
 type Treap struct {
 	root *node
 }
 
+// NewTreap: create empty treap
 func NewTreap() *Treap {
 	return &Treap{
 		root: nil,
 	}
 }
 
+// Insert: insert the given peer into the treap.
+// If the peer id already exists, then it would be overwite
 func (t *Treap) Insert(peer *tree.Peer) {
 	t.root = recursiveInsert(t.root, peer)
 }
 
+// Delete: delete the peer for given id from the treap.
+// If peer is not exists in the treap, then there are no changes happen to the treap
 func (t *Treap) Delete(id int) {
 	t.root = recursiveDelete(t.root, id)
 }
 
-func (t *Treap) MostCapacityPeer() *tree.Peer {
+// Get: return the peer which has the most capacity (root node)
+func (t *Treap) Get() *tree.Peer {
 	if t.root == nil {
 		return nil
 	}
 
-	return t.root.getPeer()
+	return t.root.get()
 }
 
+// DeepDelete: delete every peer from the treap for the given tree
+// Note: peer is a tree. Used level order traversal to visit every node in the tree
 func (t *Treap) DeepDelete(peer *tree.Peer) {
 	queue := make([]*tree.Peer, 0)
 
@@ -50,6 +62,8 @@ func (t *Treap) DeepDelete(peer *tree.Peer) {
 	}
 }
 
+// DeepInsert: insert every peer into the treap for the given tree
+// Note: peer is a tree. Used level order traversal to visit every node in the tree
 func (t *Treap) DeepInsert(peer *tree.Peer) {
 	queue := make([]*tree.Peer, 0)
 
@@ -60,7 +74,8 @@ func (t *Treap) DeepInsert(peer *tree.Peer) {
 		current := queue[0]
 		queue = queue[1:]
 
-		if current.CurrentCapacity > 0 {
+		// insert only if the peer has enough capacity
+		if current.Capacity > 0 {
 			t.Insert(current)
 		}
 
@@ -70,94 +85,125 @@ func (t *Treap) DeepInsert(peer *tree.Peer) {
 	}
 }
 
+/*
+rightRotate: do right rotation at given node to maintain the heap property in the treap
+
+       root                      L
+       / \     Right Rotate     / \
+      L   R       ———>         X  root
+     / \                          / \
+    X   Y                        Y   R
+*/
 func rightRotate(root *node) *node {
-	left := root.left
-	subTree := left.right
+	L := root.left
+	Y := L.right
 
-	left.right = root
-	root.left = subTree
+	L.right = root
+	root.left = Y
 
-	return left
+	return L
 }
 
+/*
+leftRotate: do left rotation at given node to maintain the heap property in the treap
+
+     root                       R
+     / \      Left Rotate      / \
+    L   R        ———>       root  Y
+       / \                   / \
+      X   Y                 L   X
+
+*/
 func leftRotate(root *node) *node {
-	right := root.right
-	subTree := right.left
+	R := root.right
+	X := R.left
 
-	right.left = root
-	root.right = subTree
+	R.left = root
+	root.right = X
 
-	return right
+	return R
 }
 
+// recursiveInsert: recursively insert the peer into the treap
 func recursiveInsert(root *node, peer *tree.Peer) *node {
 	if root == nil {
 		return newNode(peer)
 	}
 
+	// if already exists, then overwrite it
 	if peer.Id == root.peer.Id {
-		root.peer.CurrentCapacity = peer.CurrentCapacity
+		root.peer.Capacity = peer.Capacity
 		return root
 	}
 
+	// look for left sub tree
 	if peer.Id < root.peer.Id {
 
 		root.left = recursiveInsert(root.left, peer)
 
-		if root.left != nil && root.left.peer.CurrentCapacity > root.peer.CurrentCapacity {
+		// check whether the heap property effected
+		if root.left != nil && root.left.peer.Capacity > root.peer.Capacity {
 			root = rightRotate(root)
 		}
 
 		return root
 	}
 
+	// look for right sub tree
 	root.right = recursiveInsert(root.right, peer)
 
-	if root.right != nil && root.right.peer.CurrentCapacity > root.peer.CurrentCapacity {
+	// check whether the heap property effected
+	if root.right != nil && root.right.peer.Capacity > root.peer.Capacity {
 		root = leftRotate(root)
 	}
 
 	return root
 }
 
+// recursiveDelete: recursively delete the peer from the treap
 func recursiveDelete(root *node, id int) *node {
 	if root == nil {
 		return root
 	}
 
+	// look for left sub tree
 	if id < root.peer.Id {
 		root.left = recursiveDelete(root.left, id)
 		return root
 	}
 
+	// look for right sub tree
 	if id > root.peer.Id {
 		root.right = recursiveDelete(root.right, id)
 		return root
 	}
 
-	// no children
+	// leaf node
 	if root.left == nil && root.right == nil {
 		return nil
 	}
 
-	// having both children
+	// having both right & left child
 	if root.left != nil && root.right != nil {
 
-		if root.left.peer.CurrentCapacity < root.right.peer.CurrentCapacity {
+		// if the right child has more priority (capacity) than the left child,
+		// then do left rotation around the root
+		if root.left.peer.Capacity < root.right.peer.Capacity {
 			root = leftRotate(root)
 			root.left = recursiveDelete(root.left, id)
 			return root
 		}
 
+		// otherwise do right rotation around the root
 		root = rightRotate(root)
 		root.right = recursiveDelete(root.right, id)
 		return root
 
 	}
 
+	// having single child
 	temp := root.left
 
-	// having single child
 	if root.right != nil {
 		temp = root.right
 	}
@@ -167,16 +213,31 @@ func recursiveDelete(root *node, id int) *node {
 	return root
 }
 
+/*
+encode: encode the treap as a string.
+This will used in unit testing to validate the result
+
+	node: <id:capacity>
+
+		4
+	  /	 \
+	 3	  9
+	     /
+		8
+
+	(4:4)[ (3:2) (9:4)[ (8:3) ] ]
+*/
 func (t *Treap) encode() string {
 	return recursiveEncode(t.root)
 }
 
+// recursiveEncode: recursively encode the treap to a string
 func recursiveEncode(root *node) string {
 	if root == nil {
 		return ""
 	}
 
-	temp := "(" + strconv.Itoa(root.peer.Id) + ":" + strconv.Itoa(root.peer.CurrentCapacity) + ")"
+	temp := "(" + strconv.Itoa(root.peer.Id) + ":" + strconv.Itoa(root.peer.Capacity) + ")"
 
 	if root.left == nil && root.right == nil {
 		return temp

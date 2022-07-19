@@ -81,7 +81,7 @@ func (network *P2PNetwork) Trace() []string {
 }
 
 func (network *P2PNetwork) addToNetwork(peer *tree.Peer) {
-	parent := network.treap.MostCapacityPeer()
+	parent := network.treap.Get()
 
 	if parent == nil {
 
@@ -91,7 +91,7 @@ func (network *P2PNetwork) addToNetwork(peer *tree.Peer) {
 
 		network.topology = append(network.topology, tree)
 
-		if peer.CurrentCapacity > 0 {
+		if peer.Capacity > 0 {
 			network.treap.Insert(peer)
 		}
 
@@ -102,11 +102,11 @@ func (network *P2PNetwork) addToNetwork(peer *tree.Peer) {
 
 	network.treap.Delete(parent.Id)
 
-	if parent.CurrentCapacity > 0 {
+	if parent.Capacity > 0 {
 		network.treap.Insert(parent)
 	}
 
-	if peer.CurrentCapacity > 0 {
+	if peer.Capacity > 0 {
 		network.treap.Insert(peer)
 	}
 }
@@ -155,7 +155,7 @@ func (network *P2PNetwork) removeFromNetwork(peer *tree.Peer, tree *tree.Tree) e
 
 	// sort the children according to most capacity
 	sort.SliceStable(peer.Children, func(i, j int) bool {
-		return peer.Children[i].CurrentCapacity > peer.Children[j].CurrentCapacity
+		return peer.Children[i].Capacity > peer.Children[j].Capacity
 	})
 
 	// next child would be, child which has most capacity
@@ -184,7 +184,7 @@ func (network *P2PNetwork) reArrange(peer *tree.Peer, t *tree.Tree) {
 		return
 	}
 
-	canReArrange := peer.CurrentCapacity > (peer.Parent.CurrentCapacity + 1)
+	canReArrange := peer.Capacity > (peer.Parent.Capacity + 1)
 
 	if !canReArrange {
 		return
@@ -210,7 +210,7 @@ func (network *P2PNetwork) reArrange(peer *tree.Peer, t *tree.Tree) {
 
 	network.treap.Insert(parent)
 
-	if peer.CurrentCapacity > 0 {
+	if peer.Capacity > 0 {
 		network.treap.Insert(peer)
 	}
 

@@ -85,7 +85,7 @@ func Test_newNode(t *testing.T) {
 	}
 }
 
-func Test_getPeer(t *testing.T) {
+func Test_get(t *testing.T) {
 	testTable := []struct {
 		name     string
 		node     *node
@@ -105,7 +105,7 @@ func Test_getPeer(t *testing.T) {
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
-			result := testCase.node.getPeer()
+			result := testCase.node.get()
 
 			if result == nil && testCase.expected != nil {
 				t.Errorf("expected %d, but got %v", testCase.expected.Id, result)

@@ -57,7 +57,7 @@ func recursiveEncode(root *Peer) string {
 		return ""
 	}
 
-	current := root.MaxCapacity - root.CurrentCapacity
+	current := root.MaxCapacity - root.Capacity
 	capacity := "(" + strconv.Itoa(current) + "/" + strconv.Itoa(root.MaxCapacity) + ")"
 
 	temp := strconv.Itoa(root.Id) + capacity
