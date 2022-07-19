@@ -6,7 +6,7 @@ import (
 	"p2p-network-simulator/storage/tree"
 )
 
-// treap: binary search tree + heap (max heap)
+// Treap: binary search tree + heap (max heap)
 // binary search tree property: left sub tree keys are less than root + right sub tree keys
 // heap property: children priorities are less than the parent priority
 // use treap to keep track of peers which has most capacity
@@ -93,9 +93,9 @@ This will used in unit testing to validate the result
 
 		4
 	  /	 \
-	 3	  9
-	     /
-		8
+	 3	 9
+	    /
+	   8
 
 	(4:4)[ (3:2) (9:4)[ (8:3) ] ]
 */
