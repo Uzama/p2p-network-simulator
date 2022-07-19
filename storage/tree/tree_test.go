@@ -34,7 +34,7 @@ func init() {
 	p10.SetParent(p8)
 }
 
-func Test_newTree(t *testing.T) {
+func TestNewTree(t *testing.T) {
 	testTable := []struct {
 		name     string
 		peer     *Peer
@@ -76,7 +76,84 @@ func Test_newTree(t *testing.T) {
 	}
 }
 
-func Test_locate(t *testing.T) {
+func TestGetRoot(t *testing.T) {
+	testTable := []struct {
+		name     string
+		tree     *Tree
+		expected *Peer
+	}{
+		{
+			name:     "nil root",
+			tree:     t2,
+			expected: nil,
+		},
+		{
+			name:     "happy case",
+			tree:     t1,
+			expected: p7,
+		},
+	}
+
+	for _, testCase := range testTable {
+		t.Run(testCase.name, func(t *testing.T) {
+			result := testCase.tree.GetRoot()
+
+			if result == nil && testCase.expected != nil {
+				t.Errorf("expected %d , but got %v", testCase.expected.Id, result)
+			}
+
+			if result != nil && testCase.expected == nil {
+				t.Errorf("expected %v, but got %d", testCase.expected, result.Id)
+			}
+
+			if result != nil && testCase.expected != nil && result.Id != testCase.expected.Id {
+				t.Errorf("expected %d, but got %d", testCase.expected.Id, result.Id)
+			}
+		})
+	}
+}
+
+func TestSetRoot(t *testing.T) {
+	testTable := []struct {
+		name     string
+		peer     *Peer
+		tree     *Tree
+		expected *Tree
+	}{
+		{
+			name:     "happy case",
+			peer:     p3,
+			tree:     t2,
+			expected: t3,
+		},
+		{
+			name:     "set nil",
+			peer:     nil,
+			tree:     t2,
+			expected: t2,
+		},
+	}
+
+	for _, testCase := range testTable {
+		t.Run(testCase.name, func(t *testing.T) {
+			testCase.tree.SetRoot(testCase.peer)
+
+			if testCase.tree.root == nil && testCase.expected.root != nil {
+				t.Errorf("expected %d , but got %v", testCase.expected.root.Id, testCase.tree.root)
+			}
+
+			if testCase.tree.root != nil && testCase.expected.root == nil {
+				t.Errorf("expected %v, but got %d", testCase.expected.root, testCase.tree.root.Id)
+			}
+
+			if testCase.tree.root != nil && testCase.expected.root != nil && testCase.tree.root.Id != testCase.expected.root.Id {
+				t.Errorf("expected %d, but got %d", testCase.expected.root.Id, testCase.tree.root.Id)
+			}
+		})
+	}
+}
+
+func TestLocate(t *testing.T) {
 	testTable := []struct {
 		name     string
 		tree     *Tree
@@ -128,7 +205,7 @@ func Test_locate(t *testing.T) {
 	}
 }
 
-func Test_encode(t *testing.T) {
+func TestEncode(t *testing.T) {
 	testTable := []struct {
 		name     string
 		tree     *Tree
@@ -137,12 +214,12 @@ func Test_encode(t *testing.T) {
 		{
 			name:     "happy case 1",
 			tree:     t1,
-			expected: "7(2/2)[ 6(0/1)[  ]8(2/3)[ 9(0/4)[  ]10(0/5)[  ] ] ]",
+			expected: "7(2/2)[ 6(0/1) 8(2/3)[ 9(0/4) 10(0/5) ] ]",
 		},
 		{
 			name:     "happy case 2",
 			tree:     t3,
-			expected: "3(0/3)[  ]",
+			expected: "3(0/3)",
 		},
 		{
 			name:     "empty tree",

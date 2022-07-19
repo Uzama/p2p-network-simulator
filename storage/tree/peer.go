@@ -23,6 +23,10 @@ func NewPeer(node entities.Node) *Peer {
 	}
 }
 
+func (p *Peer) SetParent(parent *Peer) {
+	p.Parent = parent
+}
+
 func (p *Peer) AddChild(child *Peer) error {
 	if p.CurrentCapacity == 0 {
 		return errors.New("not enough space to add")
@@ -39,8 +43,11 @@ func (p *Peer) AddChild(child *Peer) error {
 func (p *Peer) RemoveChild(child *Peer) {
 	var children []*Peer
 
+	var exists bool
+
 	for _, c := range p.Children {
 		if child.Id == c.Id {
+			exists = true
 			continue
 		}
 
@@ -48,11 +55,12 @@ func (p *Peer) RemoveChild(child *Peer) {
 	}
 
 	p.Children = children
+
+	if !exists {
+		return
+	}
+
 	p.CurrentCapacity += 1
 
 	child.SetParent(nil)
-}
-
-func (p *Peer) SetParent(parent *Peer) {
-	p.Parent = parent
 }

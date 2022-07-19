@@ -31,7 +31,7 @@ var (
 	p10 = NewPeer(n10)
 )
 
-func Test_newPeer(t *testing.T) {
+func TestNewPeer(t *testing.T) {
 	testTable := []struct {
 		name     string
 		node     entities.Node
@@ -60,7 +60,7 @@ func Test_newPeer(t *testing.T) {
 	}
 }
 
-func Test_setParent(t *testing.T) {
+func TestSetParent(t *testing.T) {
 	testTable := []struct {
 		name   string
 		child  *Peer
@@ -84,7 +84,7 @@ func Test_setParent(t *testing.T) {
 	}
 }
 
-func Test_addChild(t *testing.T) {
+func TestAddChild(t *testing.T) {
 	testTable := []struct {
 		name     string
 		child    *Peer
@@ -135,6 +135,52 @@ func Test_addChild(t *testing.T) {
 					t.Errorf("expected %d, but got %d", expectedCapacity, testCase.parent.CurrentCapacity)
 				}
 
+				if testCase.child.Parent.Id != testCase.parent.Id {
+					t.Errorf("expected %d, but got %d", testCase.parent.Id, testCase.child.Parent.Id)
+				}
+
+			}
+		})
+	}
+}
+
+func TestRemoveChild(t *testing.T) {
+	testTable := []struct {
+		name   string
+		child  *Peer
+		parent *Peer
+	}{
+		{
+			name:   "happy case",
+			child:  p3,
+			parent: p2,
+		},
+		{
+			name:   "happy case2",
+			child:  p4,
+			parent: p2,
+		},
+		{
+			name:   "not exists",
+			child:  p5,
+			parent: p2,
+		},
+	}
+
+	for _, testCase := range testTable {
+		t.Run(testCase.name, func(t *testing.T) {
+			currentCapacity := testCase.parent.CurrentCapacity
+
+			testCase.parent.RemoveChild(testCase.child)
+
+			expectedCapacity := testCase.parent.MaxCapacity - len(testCase.parent.Children)
+
+			if testCase.parent.CurrentCapacity != expectedCapacity {
+				t.Errorf("expected %d, but got %d", expectedCapacity, testCase.parent.CurrentCapacity)
+			}
+
+			if testCase.parent.CurrentCapacity != currentCapacity && testCase.child.Parent != nil {
+				t.Errorf("expected nil, but got %d", testCase.child.Parent.Id)
 			}
 		})
 	}

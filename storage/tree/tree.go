@@ -49,10 +49,6 @@ func (t *Tree) Locate(id int) *Peer {
 }
 
 func (t *Tree) Encode() string {
-	if t.root == nil {
-		return ""
-	}
-
 	return recursiveEncode(t.root)
 }
 
