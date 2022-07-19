@@ -1,7 +1,6 @@
 package tree
 
 import (
-	"errors"
 	"testing"
 
 	"p2p-network-simulator/domain/entities"
@@ -86,59 +85,34 @@ func TestSetParent(t *testing.T) {
 
 func TestAddChild(t *testing.T) {
 	testTable := []struct {
-		name     string
-		child    *Peer
-		parent   *Peer
-		expected error
+		name   string
+		child  *Peer
+		parent *Peer
 	}{
 		{
-			name:     "happy case 1",
-			child:    p3,
-			parent:   p2,
-			expected: nil,
+			name:   "happy case 1",
+			child:  p3,
+			parent: p2,
 		},
 		{
-			name:     "happy case 2",
-			child:    p4,
-			parent:   p2,
-			expected: nil,
-		},
-		{
-			name:     "not enough space",
-			child:    p5,
-			parent:   p2,
-			expected: errors.New("not enough space to add"),
+			name:   "happy case 2",
+			child:  p4,
+			parent: p2,
 		},
 	}
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
-			result := testCase.parent.AddChild(testCase.child)
+			testCase.parent.AddChild(testCase.child)
 
-			if result == nil && testCase.expected != nil {
-				t.Errorf("expected %s, but got %v", testCase.expected.Error(), result)
+			expectedCapacity := testCase.parent.MaxCapacity - len(testCase.parent.Children)
+
+			if testCase.parent.CurrentCapacity != expectedCapacity {
+				t.Errorf("expected %d, but got %d", expectedCapacity, testCase.parent.CurrentCapacity)
 			}
 
-			if result != nil && testCase.expected == nil {
-				t.Errorf("expected %v, but got %s", testCase.expected, result.Error())
-			}
-
-			if result != nil && testCase.expected != nil && result.Error() != testCase.expected.Error() {
-				t.Errorf("expected %s, but got %s", testCase.expected.Error(), result.Error())
-			}
-
-			if result == nil && testCase.expected == nil {
-
-				expectedCapacity := testCase.parent.MaxCapacity - len(testCase.parent.Children)
-
-				if testCase.parent.CurrentCapacity != expectedCapacity {
-					t.Errorf("expected %d, but got %d", expectedCapacity, testCase.parent.CurrentCapacity)
-				}
-
-				if testCase.child.Parent.Id != testCase.parent.Id {
-					t.Errorf("expected %d, but got %d", testCase.parent.Id, testCase.child.Parent.Id)
-				}
-
+			if testCase.child.Parent.Id != testCase.parent.Id {
+				t.Errorf("expected %d, but got %d", testCase.parent.Id, testCase.child.Parent.Id)
 			}
 		})
 	}

@@ -1,8 +1,6 @@
 package tree
 
 import (
-	"errors"
-
 	"p2p-network-simulator/domain/entities"
 )
 
@@ -27,17 +25,11 @@ func (p *Peer) SetParent(parent *Peer) {
 	p.Parent = parent
 }
 
-func (p *Peer) AddChild(child *Peer) error {
-	if p.CurrentCapacity == 0 {
-		return errors.New("not enough space to add")
-	}
-
+func (p *Peer) AddChild(child *Peer) {
 	p.Children = append(p.Children, child)
 	p.CurrentCapacity -= 1
 
 	child.SetParent(p)
-
-	return nil
 }
 
 func (p *Peer) RemoveChild(child *Peer) {

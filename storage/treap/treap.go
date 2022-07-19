@@ -32,6 +32,44 @@ func (t *Treap) MostCapacityPeer() *tree.Peer {
 	return t.root.getPeer()
 }
 
+func (t *Treap) DeepDelete(peer *tree.Peer) {
+	queue := make([]*tree.Peer, 0)
+
+	queue = append(queue, peer)
+
+	for len(queue) != 0 {
+
+		current := queue[0]
+		queue = queue[1:]
+
+		t.Delete(current.Id)
+
+		if len(current.Children) > 0 {
+			queue = append(queue, current.Children...)
+		}
+	}
+}
+
+func (t *Treap) DeepInsert(peer *tree.Peer) {
+	queue := make([]*tree.Peer, 0)
+
+	queue = append(queue, peer)
+
+	for len(queue) != 0 {
+
+		current := queue[0]
+		queue = queue[1:]
+
+		if current.CurrentCapacity > 1 {
+			t.Insert(current)
+		}
+
+		if len(current.Children) > 0 {
+			queue = append(queue, current.Children...)
+		}
+	}
+}
+
 func rightRotate(root *node) *node {
 	left := root.left
 	subTree := left.right

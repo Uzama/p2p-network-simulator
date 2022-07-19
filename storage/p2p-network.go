@@ -98,10 +98,7 @@ func (network *P2PNetwork) addToNetwork(peer *tree.Peer) error {
 		return nil
 	}
 
-	err := parent.AddChild(peer)
-	if err != nil {
-		return err
-	}
+	parent.AddChild(peer)
 
 	network.treap.Delete(parent.Id)
 
@@ -175,7 +172,10 @@ func (network *P2PNetwork) removeFromNetwork(peer *tree.Peer, tree *tree.Tree) e
 
 	for _, child := range peer.Children[1:] {
 		child.SetParent(nil)
+
+		network.treap.DeepDelete(child)
 		network.addToNetwork(child)
+		network.treap.Insert(child)
 	}
 
 	network.reArrange(nextChild, tree)
