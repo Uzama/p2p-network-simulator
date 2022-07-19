@@ -30,8 +30,6 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 	network.lock.Lock()
 	defer network.lock.Unlock()
 
-	defer network.treap.Print()
-
 	_, ok := network.ids[node.Id]
 	if ok {
 		return fmt.Errorf("id %d already reserved", node.Id)
@@ -52,8 +50,6 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 func (network *P2PNetwork) Leave(id int) error {
 	network.lock.Lock()
 	defer network.lock.Unlock()
-
-	defer network.treap.Print()
 
 	var peer *tree.Peer
 	var tree *tree.Tree
@@ -188,7 +184,6 @@ func (network *P2PNetwork) removeFromNetwork(peer *tree.Peer, tree *tree.Tree) e
 }
 
 func (network *P2PNetwork) reArrange(peer *tree.Peer, t *tree.Tree) {
-	fmt.Println(t.Encode())
 	if peer == nil || peer.Parent == nil {
 		return
 	}

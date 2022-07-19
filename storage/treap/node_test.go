@@ -22,7 +22,7 @@ var (
 	p1  = tree.NewPeer(n1)
 	p2  = tree.NewPeer(n2)
 	p3  = tree.NewPeer(n3)
-	p4  = tree.NewPeer(n5)
+	p4  = tree.NewPeer(n4)
 	p5  = tree.NewPeer(n5)
 	p6  = tree.NewPeer(n6)
 	p7  = tree.NewPeer(n7)

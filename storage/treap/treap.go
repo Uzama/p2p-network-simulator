@@ -1,7 +1,7 @@
 package treap
 
 import (
-	"fmt"
+	"strconv"
 
 	"p2p-network-simulator/storage/tree"
 )
@@ -58,7 +58,8 @@ func recursiveInsert(root *node, peer *tree.Peer) *node {
 	}
 
 	if peer.Id == root.peer.Id {
-		return newNode(peer)
+		root.peer.CurrentCapacity = peer.CurrentCapacity
+		return root
 	}
 
 	if peer.Id < root.peer.Id {
@@ -128,35 +129,31 @@ func recursiveDelete(root *node, id int) *node {
 	return root
 }
 
-func (t *Treap) Print() {
-	if t.root == nil {
-		return
+func (t *Treap) encode() string {
+	return recursiveEncode(t.root)
+}
+
+func recursiveEncode(root *node) string {
+	if root == nil {
+		return ""
 	}
 
-	queue := make([]*node, 0)
+	temp := "(" + strconv.Itoa(root.peer.Id) + ":" + strconv.Itoa(root.peer.CurrentCapacity) + ")"
 
-	queue = append(queue, t.root)
-
-	for len(queue) != 0 {
-		noOfNodes := len(queue)
-
-		for i := 0; i < noOfNodes; i++ {
-			current := queue[0]
-			queue = queue[1:]
-
-			fmt.Printf("%d(%d) ", current.peer.Id, current.peer.CurrentCapacity)
-
-			if current.left != nil {
-				queue = append(queue, current.left)
-			}
-
-			if current.right != nil {
-				queue = append(queue, current.right)
-			}
-		}
-
-		fmt.Println()
+	if root.left == nil && root.right == nil {
+		return temp
 	}
 
-	return
+	temp += "[ "
+
+	temp += recursiveEncode(root.left)
+
+	if root.left != nil && root.right != nil {
+		temp += " "
+	}
+
+	temp += recursiveEncode(root.right)
+
+	temp += " ]"
+	return temp
 }
