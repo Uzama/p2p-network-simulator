@@ -60,7 +60,7 @@ func (t *Treap) DeepInsert(peer *tree.Peer) {
 		current := queue[0]
 		queue = queue[1:]
 
-		if current.CurrentCapacity > 1 {
+		if current.CurrentCapacity > 0 {
 			t.Insert(current)
 		}
 

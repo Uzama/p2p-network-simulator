@@ -37,10 +37,7 @@ func (network *P2PNetwork) Join(node entities.Node) error {
 
 	peer := tree.NewPeer(node)
 
-	err := network.addToNetwork(peer)
-	if err != nil {
-		return err
-	}
+	network.addToNetwork(peer)
 
 	network.ids[node.Id] = struct{}{}
 
@@ -83,10 +80,13 @@ func (network *P2PNetwork) Trace() []string {
 	return digram
 }
 
-func (network *P2PNetwork) addToNetwork(peer *tree.Peer) error {
+func (network *P2PNetwork) addToNetwork(peer *tree.Peer) {
 	parent := network.treap.MostCapacityPeer()
 
 	if parent == nil {
+
+		peer.SetParent(nil)
+
 		tree := tree.NewTree(peer)
 
 		network.topology = append(network.topology, tree)
@@ -95,7 +95,7 @@ func (network *P2PNetwork) addToNetwork(peer *tree.Peer) error {
 			network.treap.Insert(peer)
 		}
 
-		return nil
+		return
 	}
 
 	parent.AddChild(peer)
@@ -109,8 +109,6 @@ func (network *P2PNetwork) addToNetwork(peer *tree.Peer) error {
 	if peer.CurrentCapacity > 0 {
 		network.treap.Insert(peer)
 	}
-
-	return nil
 }
 
 func (network *P2PNetwork) removeFromNetwork(peer *tree.Peer, tree *tree.Tree) error {
@@ -171,11 +169,9 @@ func (network *P2PNetwork) removeFromNetwork(peer *tree.Peer, tree *tree.Tree) e
 	}
 
 	for _, child := range peer.Children[1:] {
-		child.SetParent(nil)
-
 		network.treap.DeepDelete(child)
 		network.addToNetwork(child)
-		network.treap.Insert(child)
+		network.treap.DeepInsert(child)
 	}
 
 	network.reArrange(nextChild, tree)
