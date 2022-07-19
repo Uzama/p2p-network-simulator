@@ -86,6 +86,24 @@ func (t *Treap) DeepInsert(peer *tree.Peer) {
 }
 
 /*
+encode: encode the treap as a string.
+This will used in unit testing to validate the result
+
+	node: <id:capacity>
+
+		4
+	  /	 \
+	 3	  9
+	     /
+		8
+
+	(4:4)[ (3:2) (9:4)[ (8:3) ] ]
+*/
+func (t *Treap) encode() string {
+	return recursiveEncode(t.root)
+}
+
+/*
 rightRotate: do right rotation at given node to maintain the heap property in the treap
 
        root                      L
@@ -211,24 +229,6 @@ func recursiveDelete(root *node, id int) *node {
 	root = temp
 
 	return root
-}
-
-/*
-encode: encode the treap as a string.
-This will used in unit testing to validate the result
-
-	node: <id:capacity>
-
-		4
-	  /	 \
-	 3	  9
-	     /
-		8
-
-	(4:4)[ (3:2) (9:4)[ (8:3) ] ]
-*/
-func (t *Treap) encode() string {
-	return recursiveEncode(t.root)
 }
 
 // recursiveEncode: recursively encode the treap to a string
