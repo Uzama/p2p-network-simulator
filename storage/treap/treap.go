@@ -21,8 +21,17 @@ func NewTreap() *Treap {
 	}
 }
 
+// Get: return the peer which has the most capacity (root node)
+func (t *Treap) Get() *tree.Peer {
+	if t.root == nil {
+		return nil
+	}
+
+	return t.root.get()
+}
+
 // Insert: insert the given peer into the treap.
-// If the peer id already exists, then it would be overwite
+// If the peer id already exists, then it would be overwitten
 func (t *Treap) Insert(peer *tree.Peer) {
 	t.root = recursiveInsert(t.root, peer)
 }
@@ -31,15 +40,6 @@ func (t *Treap) Insert(peer *tree.Peer) {
 // If peer is not exists in the treap, then there are no changes happen to the treap
 func (t *Treap) Delete(id int) {
 	t.root = recursiveDelete(t.root, id)
-}
-
-// Get: return the peer which has the most capacity (root node)
-func (t *Treap) Get() *tree.Peer {
-	if t.root == nil {
-		return nil
-	}
-
-	return t.root.get()
 }
 
 // DeepDelete: delete every peer from the treap for the given tree
