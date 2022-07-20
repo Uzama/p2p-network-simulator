@@ -1,0 +1,10 @@
+version: "1.0"
+services:
+  app:
+    image: p2p-network-simulator
+    build:
+      dockerfile: Dockerfile
+    stdin_open: true
+    tty: true
+    ports:
+      - 8080:8080
