@@ -55,7 +55,7 @@ func TestJoin(t *testing.T) {
 			name:               "happy path",
 			reader:             bytes.NewReader([]byte(`{"id":1, "capacity":1}`)),
 			expectedStatusCode: http.StatusCreated,
-			expectedOutput:     `{"message":"succussfully joined","error":false,"data":1}`,
+			expectedOutput:     `{"message":"successfully joined","error":false,"data":1}`,
 		},
 		{
 			name:               "provide node 1 twice",
@@ -101,7 +101,7 @@ func TestTrace(t *testing.T) {
 		{
 			name:               "happy case",
 			expectedStatusCode: http.StatusOK,
-			expectedOutput:     `{"message":"trace recivied","error":false,"data":["1(0/1)"]}`,
+			expectedOutput:     `{"message":"trace received","error":false,"data":["1(0/1)"]}`,
 		},
 	}
 
@@ -143,7 +143,7 @@ func TestLeave(t *testing.T) {
 			name:               "happy case",
 			id:                 1,
 			expectedStatusCode: http.StatusAccepted,
-			expectedOutput:     `{"message":"succussfully left","error":false,"data":1}`,
+			expectedOutput:     `{"message":"successfully left","error":false,"data":1}`,
 		},
 		{
 			name:               "negative value",

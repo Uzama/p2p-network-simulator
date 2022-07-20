@@ -149,7 +149,7 @@ func (network *P2PNetwork) add(peer *tree.Peer) {
 func (network *P2PNetwork) remove(peer *tree.Peer, tree *tree.Tree) {
 	parent := peer.Parent
 
-	// if the leaving peer is not the root, then remove the leaving peer from it's parent
+	// if the leaving peer is not the root, then remove the leaving peer from its parent
 	if parent != nil {
 		parent.RemoveChild(peer)
 	}
@@ -173,8 +173,8 @@ func (network *P2PNetwork) remove(peer *tree.Peer, tree *tree.Tree) {
 		network.treap.Delete(parent.Id)
 		network.treap.Insert(parent)
 
-		// re arrange the parent in the tree
-		network.reArrange(parent, tree)
+		// re order the parent in the tree
+		network.reOrder(parent, tree)
 
 		return
 	}
@@ -198,8 +198,8 @@ func (network *P2PNetwork) remove(peer *tree.Peer, tree *tree.Tree) {
 		// add the next child to the children list of the leaving peer's parent
 		parent.AddChild(nextChild)
 
-		// re arrange the next child in the tree
-		network.reArrange(nextChild, tree)
+		// re order the next child in the tree
+		network.reOrder(nextChild, tree)
 
 		return
 	}
@@ -229,7 +229,7 @@ func (network *P2PNetwork) remove(peer *tree.Peer, tree *tree.Tree) {
 	// remaining children would be added to the network
 	for _, child := range peer.Children[1:] {
 		// delete child's tree peers from the treap
-		// to prevent from adding the child to it's own tree
+		// to prevent from adding the child to its own tree
 		network.treap.DeepDelete(child)
 
 		// add to the network
@@ -239,22 +239,22 @@ func (network *P2PNetwork) remove(peer *tree.Peer, tree *tree.Tree) {
 		network.treap.DeepInsert(child)
 	}
 
-	// re arrange the next child in the tree
-	network.reArrange(nextChild, tree)
+	// re order the next child in the tree
+	network.reOrder(nextChild, tree)
 
 	return
 }
 
-// reArrange: recursively re arranges the given peer on the given tree
+// reOrder: recursively re orders the given peer on the given tree
 // to make sure that the tree's depth would become smaller.
-// the peer moving up words based on it's capacity and it's parent capacity
-func (network *P2PNetwork) reArrange(peer *tree.Peer, tree *tree.Tree) {
+// the peer moving up words based on its capacity and its parent capacity
+func (network *P2PNetwork) reOrder(peer *tree.Peer, tree *tree.Tree) {
 	if peer == nil || peer.Parent == nil {
 		return
 	}
 
-	// if the given peer has sufficient capacity (parent peer capacity +1) than it's parent peer,
-	// then re arrange the peer with it's parent (make the parent peer as child of the given peer)
+	// if the given peer has sufficient capacity (parent peer capacity +1),
+	// then re order the peer with its parent (make the parent peer as child of the given peer)
 	if !(peer.Capacity > (peer.Parent.Capacity + 1)) {
 		return
 	}
@@ -263,13 +263,11 @@ func (network *P2PNetwork) reArrange(peer *tree.Peer, tree *tree.Tree) {
 	grandParent := parent.Parent
 
 	/*
-		re arrangement
-
-			  1(1/1)
-				|		re arrange 10		     10(2/3)
-			  10(1/3)  ---------------->          /   \
-				|                             1(0/1) 12(0/2)
-			  12(0/2)
+		  1(1/1)
+			|		re order 10		         10(2/3)
+		  10(1/3)  ---------------->          /   \
+			|                             1(0/1) 12(0/2)
+		  12(0/2)
 	*/
 
 	// remove the given peer from the children list of the parent
@@ -282,7 +280,7 @@ func (network *P2PNetwork) reArrange(peer *tree.Peer, tree *tree.Tree) {
 	}
 
 	// if the parent is not root of the tree,
-	// then add the given peer into the children list of it's grand parent
+	// then add the given peer into the children list of its grand parent
 	if grandParent != nil {
 		grandParent.RemoveChild(parent)
 		grandParent.AddChild(peer)
@@ -291,7 +289,7 @@ func (network *P2PNetwork) reArrange(peer *tree.Peer, tree *tree.Tree) {
 	// add the parent to the children list of the given peer
 	peer.AddChild(parent)
 
-	// update the peer and it's parent in the treap
+	// update the peer and its parent in the treap
 	network.treap.Delete(parent.Id)
 	network.treap.Delete(peer.Id)
 
@@ -302,7 +300,7 @@ func (network *P2PNetwork) reArrange(peer *tree.Peer, tree *tree.Tree) {
 	}
 
 	// keep doing
-	network.reArrange(peer, tree)
+	network.reOrder(peer, tree)
 }
 
 // removeTree: removes the given tree from the network topology
