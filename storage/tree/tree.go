@@ -4,24 +4,31 @@ import (
 	"strconv"
 )
 
+// Tree: it is represents a sub network. It's connected with peers and form a n-ary tree
+// Here, n in n-ary tree is equal to max capacity of each peer
 type Tree struct {
 	root *Peer
 }
 
+// NewTree: creates empty tree
 func NewTree(peer *Peer) *Tree {
 	return &Tree{
 		root: peer,
 	}
 }
 
+// GetRoot: returns the root
 func (t *Tree) GetRoot() *Peer {
 	return t.root
 }
 
+// SetRoot: resets the root with the given peer
 func (t *Tree) SetRoot(peer *Peer) {
 	t.root = peer
 }
 
+// Locate: returns the peer for given id. if id is not in the tree, then returns nil
+// Uses level order traversal to visits every node in the tree
 func (t *Tree) Locate(id int) *Peer {
 	if t.root == nil {
 		return nil
@@ -48,17 +55,31 @@ func (t *Tree) Locate(id int) *Peer {
 	return nil
 }
 
+/*
+Encode: encodes the tree as a string.
+
+	node: id ( #child / max capacity)
+
+		7
+	   / \
+	  6   8
+	     / \
+		9  10
+
+	7(2/2)[ 6(0/1) 8(2/3)[ 9(0/4) 10(0/5) ] ]
+*/
 func (t *Tree) Encode() string {
 	return recursiveEncode(t.root)
 }
 
+// recursiveEncode: recursively encodes the tree to a string
 func recursiveEncode(root *Peer) string {
 	if root == nil {
 		return ""
 	}
 
-	current := root.MaxCapacity - root.Capacity
-	capacity := "(" + strconv.Itoa(current) + "/" + strconv.Itoa(root.MaxCapacity) + ")"
+	children := len(root.Children) // no of children
+	capacity := "(" + strconv.Itoa(children) + "/" + strconv.Itoa(root.MaxCapacity) + ")"
 
 	temp := strconv.Itoa(root.Id) + capacity
 

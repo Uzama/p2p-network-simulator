@@ -9,14 +9,14 @@ type node struct {
 	right *node
 }
 
-// newNode: create new node
+// newNode: creates new node
 func newNode(peer *tree.Peer) *node {
 	return &node{
 		peer: peer,
 	}
 }
 
-// get: return the peer
+// get: returns the peer
 func (n *node) get() *tree.Peer {
 	return n.peer
 }

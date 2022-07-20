@@ -7,21 +7,21 @@ import (
 )
 
 // Treap: binary search tree + heap (max heap)
-// binary search tree property: left sub tree keys are less than root + right sub tree keys
-// heap property: children priorities are less than the parent priority
-// use treap to keep track of peers which has most capacity
+// Binary search tree property: left sub tree keys are less than root + right sub tree keys
+// Heap property: children priorities are less than the parent priority
+// Use treap to keep track of peers which has most capacity
 type Treap struct {
 	root *node
 }
 
-// NewTreap: create empty treap
+// NewTreap: creates empty treap
 func NewTreap() *Treap {
 	return &Treap{
 		root: nil,
 	}
 }
 
-// Get: return the peer which has the most capacity (root node)
+// Get: returns the peer which has the most capacity (root node)
 func (t *Treap) Get() *tree.Peer {
 	if t.root == nil {
 		return nil
@@ -30,20 +30,20 @@ func (t *Treap) Get() *tree.Peer {
 	return t.root.get()
 }
 
-// Insert: insert the given peer into the treap.
-// If the peer id already exists, then it would be overwitten
+// Insert: inserts the given peer into the treap.
+// If the peer id already exists, then overwrites it
 func (t *Treap) Insert(peer *tree.Peer) {
 	t.root = recursiveInsert(t.root, peer)
 }
 
-// Delete: delete the peer for given id from the treap.
+// Delete: deletes the peer for given id from the treap.
 // If peer is not exists in the treap, then there are no changes happen to the treap
 func (t *Treap) Delete(id int) {
 	t.root = recursiveDelete(t.root, id)
 }
 
-// DeepDelete: delete every peer from the treap for the given tree
-// Note: peer is a tree. Used level order traversal to visit every node in the tree
+// DeepDelete: deletes each and every peer from the treap for the given tree
+// Peer is a tree. Uses level order traversal to visits every node in the tree
 func (t *Treap) DeepDelete(peer *tree.Peer) {
 	queue := make([]*tree.Peer, 0)
 
@@ -62,8 +62,8 @@ func (t *Treap) DeepDelete(peer *tree.Peer) {
 	}
 }
 
-// DeepInsert: insert every peer into the treap for the given tree
-// Note: peer is a tree. Used level order traversal to visit every node in the tree
+// DeepInsert: inserts each and every peer into the treap for the given tree
+// Peer is a tree. Uses level order traversal to visits every node in the tree
 func (t *Treap) DeepInsert(peer *tree.Peer) {
 	queue := make([]*tree.Peer, 0)
 
@@ -86,16 +86,16 @@ func (t *Treap) DeepInsert(peer *tree.Peer) {
 }
 
 /*
-encode: encode the treap as a string.
+encode: encodes the treap as a string.
 This will used in unit testing to validate the result
 
 	node: <id:capacity>
 
-		4
-	  /	 \
-	 3	 9
-	    /
-	   8
+		 4
+		/ \
+	   3   9
+		  /
+		 8
 
 	(4:4)[ (3:2) (9:4)[ (8:3) ] ]
 */
@@ -104,7 +104,7 @@ func (t *Treap) encode() string {
 }
 
 /*
-rightRotate: do right rotation at given node to maintain the heap property in the treap
+rightRotate: does right rotation at given node to maintain the heap property in the treap
 
        root                      L
        / \     Right Rotate     / \
@@ -123,7 +123,7 @@ func rightRotate(root *node) *node {
 }
 
 /*
-leftRotate: do left rotation at given node to maintain the heap property in the treap
+leftRotate: does left rotation at given node to maintain the heap property in the treap
 
      root                       R
      / \      Left Rotate      / \
@@ -142,13 +142,13 @@ func leftRotate(root *node) *node {
 	return R
 }
 
-// recursiveInsert: recursively insert the peer into the treap
+// recursiveInsert: recursively inserts the peer into the treap
 func recursiveInsert(root *node, peer *tree.Peer) *node {
 	if root == nil {
 		return newNode(peer)
 	}
 
-	// if already exists, then overwrite it
+	// if already exists, then overwrites it
 	if peer.Id == root.peer.Id {
 		root.peer.Capacity = peer.Capacity
 		return root
@@ -178,7 +178,7 @@ func recursiveInsert(root *node, peer *tree.Peer) *node {
 	return root
 }
 
-// recursiveDelete: recursively delete the peer from the treap
+// recursiveDelete: recursively deletes the peer from the treap
 func recursiveDelete(root *node, id int) *node {
 	if root == nil {
 		return root
@@ -231,7 +231,7 @@ func recursiveDelete(root *node, id int) *node {
 	return root
 }
 
-// recursiveEncode: recursively encode the treap to a string
+// recursiveEncode: recursively encodes the treap to a string
 func recursiveEncode(root *node) string {
 	if root == nil {
 		return ""
