@@ -173,7 +173,7 @@ func (network *P2PNetwork) remove(peer *tree.Peer, tree *tree.Tree) {
 		network.treap.Delete(parent.Id)
 		network.treap.Insert(parent)
 
-		// re order the parent in the tree
+		// reorder the parent in the tree
 		network.reOrder(parent, tree)
 
 		return
@@ -198,7 +198,7 @@ func (network *P2PNetwork) remove(peer *tree.Peer, tree *tree.Tree) {
 		// add the next child to the children list of the leaving peer's parent
 		parent.AddChild(nextChild)
 
-		// re order the next child in the tree
+		// reorder the next child in the tree
 		network.reOrder(nextChild, tree)
 
 		return
@@ -239,22 +239,22 @@ func (network *P2PNetwork) remove(peer *tree.Peer, tree *tree.Tree) {
 		network.treap.DeepInsert(child)
 	}
 
-	// re order the next child in the tree
+	// reorder the next child in the tree
 	network.reOrder(nextChild, tree)
 
 	return
 }
 
-// reOrder: recursively re orders the given peer on the given tree
+// reOrder: recursively reorders the given peer on the given tree
 // to make sure that the tree's depth would become smaller.
-// the peer moving up words based on its capacity and its parent capacity
+// the peer moving upwards based on its free capacity and its parent free capacity
 func (network *P2PNetwork) reOrder(peer *tree.Peer, tree *tree.Tree) {
 	if peer == nil || peer.Parent == nil {
 		return
 	}
 
-	// if the given peer has sufficient capacity (parent peer capacity +1),
-	// then re order the peer with its parent (make the parent peer as child of the given peer)
+	// if the given peer has sufficient free capacity (parent peer free capacity +1),
+	// then reorder the peer with its parent (make the parent peer as child of the given peer)
 	if !(peer.Capacity > (peer.Parent.Capacity + 1)) {
 		return
 	}
@@ -264,7 +264,7 @@ func (network *P2PNetwork) reOrder(peer *tree.Peer, tree *tree.Tree) {
 
 	/*
 		  1(1/1)
-			|		re order 10		         10(2/3)
+			|		reorder 10		         10(2/3)
 		  10(1/3)  ---------------->          /   \
 			|                             1(0/1) 12(0/2)
 		  12(0/2)

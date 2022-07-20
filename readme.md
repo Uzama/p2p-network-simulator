@@ -82,6 +82,14 @@ Service returns the following status codes in its API:
 | 400 | `BAD REQUEST` |
 | 422 | `UN PROCESSABLE ENTITY` |
 
+## Unit Tests
+
+To see unit test overall coverage and the coverage of each function, run the following commands
+```
+    go test -coverprofile unite-test-cover.out ./...
+    go tool cover -func unite-test-cover.out
+```
+
 ## Coding Standards
 
 Followed [clean architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) to organize the code.
