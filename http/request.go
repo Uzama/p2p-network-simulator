@@ -17,6 +17,7 @@ type Node struct {
 func decodeRequest(r *http.Request) (entities.Node, error) {
 	node := entities.Node{}
 
+	// read the request body
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return node, err
@@ -24,11 +25,13 @@ func decodeRequest(r *http.Request) (entities.Node, error) {
 
 	defer r.Body.Close()
 
+	// decode json data
 	err = json.Unmarshal(body, &node)
 	if err != nil {
 		return node, err
 	}
 
+	// validate id and capacity
 	if node.Id < 1 {
 		return node, errors.New("id must be a positive integer")
 	}

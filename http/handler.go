@@ -24,7 +24,9 @@ func newHandler() handler {
 	}
 }
 
+// Join: controller for join the network
 func (hdl handler) Join(w http.ResponseWriter, r *http.Request) {
+	// decode request body
 	node, err := decodeRequest(r)
 	if err != nil {
 		log.Printf("error:%s\n", err.Error())
@@ -45,9 +47,11 @@ func (hdl handler) Join(w http.ResponseWriter, r *http.Request) {
 	handle(w, "succussfully joined", node.Id, http.StatusCreated)
 }
 
+// Join: controller for leave the network
 func (hdl handler) Leave(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
+	// retrive id from the request
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		log.Printf("error:%s\n", err.Error())
@@ -76,6 +80,7 @@ func (hdl handler) Leave(w http.ResponseWriter, r *http.Request) {
 	handle(w, "succussfully left", id, http.StatusAccepted)
 }
 
+// Join: controller for get trace of the network
 func (hdl handler) Trace(w http.ResponseWriter, r *http.Request) {
 	trace := hdl.usecase.Trace()
 
