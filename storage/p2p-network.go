@@ -16,8 +16,8 @@ type P2PNetwork struct {
 	// the network topology contains list of trees
 	topology []*tree.Tree
 
-	// we use treap to store peers which has enough capacity (capacity > 0).
-	// we can easily identify the peer which has maximum capacity (the root node of the treap)
+	// we use treap to store peers which has free capacity (capacity > 0).
+	// we can easily identify the peer which has the most free capacity (the root node of the treap)
 	treap *treap.Treap
 
 	// keeps track of joint peer's id in a set data structure to ensure ids are unique
@@ -107,10 +107,10 @@ func (network *P2PNetwork) Trace() []string {
 
 // add: adds the given peer to the network
 func (network *P2PNetwork) add(peer *tree.Peer) {
-	// get peer which has more capacity from the treap
+	// get peer which has the most free capacity from the treap
 	parent := network.treap.Get()
 
-	// if there are no peers with enough capacity, then add the given peer into a new tree
+	// if there are no peers with free capacity, then add the given peer into a new tree
 	if parent == nil {
 		// new peer will become the root of the tree. so parent should be nil
 		peer.SetParent(nil)
@@ -121,7 +121,7 @@ func (network *P2PNetwork) add(peer *tree.Peer) {
 		// add the new tree into the network topology
 		network.topology = append(network.topology, tree)
 
-		// if the given peer has enough capacity, then insert it into the treap
+		// if the given peer has free capacity, then insert it into the treap
 		if peer.Capacity > 0 {
 			network.treap.Insert(peer)
 		}
@@ -129,13 +129,13 @@ func (network *P2PNetwork) add(peer *tree.Peer) {
 		return
 	}
 
-	// add the given peer into the children list of the parent peer which has more capacity
+	// add the given peer into the children list of the parent peer which has the most free capacity
 	parent.AddChild(peer)
 
 	// update the parent peer in the treap by delete and re insert it
 	network.treap.Delete(parent.Id)
 
-	// only insert peers into the treap, if they have enough capacity
+	// only insert peers into the treap, if they have free capacity
 	if parent.Capacity > 0 {
 		network.treap.Insert(parent)
 	}

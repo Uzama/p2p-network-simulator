@@ -9,7 +9,7 @@ import (
 // Treap: binary search tree + heap (max heap)
 // Binary search tree property: left sub tree keys are less than root + right sub tree keys
 // Heap property: children priorities are less than the parent priority
-// Use treap to keep track of peers which has most capacity
+// Use treap to keep track of peers which has the most free capacity
 type Treap struct {
 	root *node
 }
@@ -21,7 +21,7 @@ func NewTreap() *Treap {
 	}
 }
 
-// Get: returns the peer which has the most capacity (root node)
+// Get: returns the peer which has the most free capacity (root node)
 func (t *Treap) Get() *tree.Peer {
 	if t.root == nil {
 		return nil
@@ -74,7 +74,7 @@ func (t *Treap) DeepInsert(peer *tree.Peer) {
 		current := queue[0]
 		queue = queue[1:]
 
-		// insert only if the peer has enough capacity
+		// insert only if the peer has free capacity
 		if current.Capacity > 0 {
 			t.Insert(current)
 		}

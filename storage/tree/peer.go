@@ -9,7 +9,7 @@ import (
 type Peer struct {
 	Id          int
 	MaxCapacity int
-	Capacity    int // remaining capacity
+	Capacity    int // free capacity
 	Parent      *Peer
 	Children    []*Peer
 }
