@@ -4,7 +4,7 @@ import (
 	"strconv"
 )
 
-// Tree: it is represents a sub network. It's connected with peers and form a n-ary tree
+// Tree: it represents a sub network. It's connected peers and form a n-ary tree
 // Here, n in n-ary tree is equal to max capacity of each peer
 type Tree struct {
 	root *Peer
