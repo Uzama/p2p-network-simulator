@@ -44,7 +44,7 @@ func (hdl handler) Join(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("trace:node %d<%d> join the network\n", node.Id, node.Capacity)
-	handle(w, "succussfully joined", node.Id, http.StatusCreated)
+	handle(w, "successfully joined", node.Id, http.StatusCreated)
 }
 
 // Join: controller for leave the network
@@ -77,7 +77,7 @@ func (hdl handler) Leave(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("trace:node %d leave the network\n", id)
-	handle(w, "succussfully left", id, http.StatusAccepted)
+	handle(w, "successfully left", id, http.StatusAccepted)
 }
 
 // Join: controller for get trace of the network
@@ -85,5 +85,5 @@ func (hdl handler) Trace(w http.ResponseWriter, r *http.Request) {
 	trace := hdl.usecase.Trace()
 
 	log.Println("trace:network trace sent")
-	handle(w, "trace recivied", trace, http.StatusOK)
+	handle(w, "trace received", trace, http.StatusOK)
 }
