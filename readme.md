@@ -7,7 +7,7 @@ A REST API application to simulate a p2p network with a tree topology. Following
 
 see more details about the implementation on [wiki](https://github.com/Uzama/p2p-network-simulator/wiki) 
 
-### How to start 
+## How to start 
 
 - Make sure you have installed latest version of docker and docker engine is up and running.
 - Clone the service locally and navigate to project root directory.
@@ -15,9 +15,9 @@ see more details about the implementation on [wiki](https://github.com/Uzama/p2p
 - Make sure service is up and running. 
 - Now you can send request to the service at ```localhost:8080```.
 
-### API Reference
+## API Reference
 
-#### Join
+### Join
 
 ```
   POST /join
@@ -40,7 +40,7 @@ see more details about the implementation on [wiki](https://github.com/Uzama/p2p
     }
 ```
 
-#### Leave
+### Leave
 
 ```
   DELETE /leave/1
@@ -55,7 +55,7 @@ see more details about the implementation on [wiki](https://github.com/Uzama/p2p
     }
 ```
 
-#### Trace
+### Trace
 
 ```
   GET /trace
@@ -69,3 +69,15 @@ see more details about the implementation on [wiki](https://github.com/Uzama/p2p
         "data":["1(0/2)"]
     }  
 ```
+
+## Status Codes
+
+Service returns the following status codes in its API:
+
+| Status Code | Description |
+| :--- | :--- |
+| 200 | `OK` |
+| 201 | `CREATED` |
+| 202 | `ACCEPTED` |
+| 400 | `BAD REQUEST` |
+| 422 | `UN PROCESSABLE ENTITY` |
