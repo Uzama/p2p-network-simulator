@@ -2,6 +2,7 @@ services:
   app:
     image: p2p-network-simulator
     build:
+      context: .
       dockerfile: Dockerfile
     stdin_open: true
     tty: true
